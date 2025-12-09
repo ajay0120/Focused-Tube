@@ -1,6 +1,5 @@
 import React from 'react';
 import { Play } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
     return (
@@ -8,7 +7,7 @@ const Navbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center gap-2">
-                         <div className="bg-gradient-to-tr from-purple-600 to-blue-600 p-2 rounded-lg">
+                        <div className="bg-gradient-to-tr from-purple-600 to-blue-600 p-2 rounded-lg">
                             <Play className="w-5 h-5 text-white fill-white" />
                         </div>
                         <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
