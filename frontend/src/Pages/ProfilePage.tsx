@@ -1,10 +1,41 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
-import { User, Clock, Shield } from 'lucide-react';
+import { User, Clock, Shield, Loader } from 'lucide-react';
+import { searchVideos } from '../api/video';
+
+interface Video {
+    id: string;
+    title: string;
+    description: string;
+    thumbnail: string;
+    channelTitle: string;
+    publishedAt: string;
+}
 
 const ProfilePage = () => {
     const auth = useContext(AuthContext);
+    const [recommended, setRecommended] = useState<Video[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (auth?.user?.interests && auth.user.interests.length > 0) {
+            const fetchRecommended = async () => {
+                setLoading(true);
+                try {
+                    // Search for the first interest for now
+                    const query = auth?.user?.interests?.[0] || 'programming';
+                    const data = await searchVideos(query);
+                    setRecommended(data.slice(0, 4)); // Show top 4
+                } catch (error) {
+                    console.error("Failed to fetch recommendations", error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchRecommended();
+        }
+    }, [auth?.user?.interests]);
 
     return (
         <div className="min-h-screen bg-gray-900 text-white">
@@ -58,7 +89,7 @@ const ProfilePage = () => {
                      </div>
 
                      {/* Interests Section */}
-                     <div className="bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700">
+                     <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700">
                         <h2 className="text-xl font-bold mb-6">Your Interests</h2>
                         <div className="flex flex-wrap gap-2">
                              {auth?.user?.interests?.map((interest: string, i: number) => (
@@ -67,6 +98,32 @@ const ProfilePage = () => {
                                 </span>
                              )) || <p className="text-gray-500">No interests added yet.</p>}
                         </div>
+                     </div>
+
+                     {/* Recommended Section - NEW */}
+                     <div className="bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700">
+                        <h2 className="text-xl font-bold mb-6">Recommended for You</h2>
+                         {loading ? (
+                             <div className="flex justify-center p-8">
+                                <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+                             </div>
+                         ) : recommended.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {recommended.map((video) => (
+                                    <div key={video.id} className="bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:ring-2 hover:ring-blue-500 transition duration-200">
+                                        <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer" className="flex">
+                                            <img src={video.thumbnail} alt={video.title} className="w-32 h-24 object-cover" />
+                                            <div className="p-3">
+                                                <h3 className="text-sm font-bold text-white line-clamp-2">{video.title}</h3>
+                                                <p className="text-xs text-gray-400 mt-1">{video.channelTitle}</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
+                         ) : (
+                             <p className="text-gray-500">Add interests to see recommendations.</p>
+                         )}
                      </div>
                 </div>
             </main>

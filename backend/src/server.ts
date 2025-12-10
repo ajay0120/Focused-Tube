@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db';
 import authRoutes from './routes/authRoutes';
+import videoRoutes from './routes/videoRoutes';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/users', authRoutes);
+app.use('/api/videos', videoRoutes);
 
 const PORT = process.env.PORT || 5000;
 
