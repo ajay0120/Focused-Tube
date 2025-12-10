@@ -37,30 +37,48 @@ const MOCK_VIDEOS: Video[] = [
 ];
 
 export const searchVideos = async (query: string): Promise<Video[]> => {
-    if (!process.env.YOUTUBE_API_KEY) {
-        console.log('Using Mock Data for YouTube Search');
-        return MOCK_VIDEOS.filter(v => v.title.toLowerCase().includes(query.toLowerCase()));
-    }
-
     try {
-        const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-            params: {
-                part: 'snippet',
-                maxResults: 10,
-                q: query,
-                type: 'video',
-                key: process.env.YOUTUBE_API_KEY
-            }
-        });
+        let videos = [];
+        
+        // 1. Fetch from YouTube
+        if (!process.env.YOUTUBE_API_KEY) {
+            console.log('Using Mock Data for YouTube Search');
+            videos = MOCK_VIDEOS.filter(v => v.title.toLowerCase().includes(query.toLowerCase()));
+        } else {
+            const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+                params: {
+                    part: 'snippet',
+                    maxResults: 10,
+                    q: query,
+                    type: 'video',
+                    key: process.env.YOUTUBE_API_KEY
+                }
+            });
 
-        return response.data.items.map((item: any) => ({
-            id: item.id.videoId,
-            title: item.snippet.title,
-            description: item.snippet.description,
-            thumbnail: item.snippet.thumbnails.medium.url,
-            channelTitle: item.snippet.channelTitle,
-            publishedAt: item.snippet.publishedAt
-        }));
+            videos = response.data.items.map((item: any) => ({
+                id: item.id.videoId,
+                title: item.snippet.title,
+                description: item.snippet.description,
+                thumbnail: item.snippet.thumbnails.medium.url,
+                channelTitle: item.snippet.channelTitle,
+                publishedAt: item.snippet.publishedAt
+            }));
+        }
+
+        // 2. Rank using ML Service (Falback to original order if fails)
+        try {
+            const mlResponse = await axios.post('http://localhost:8000/api/videos/rank', {
+                videos: videos
+            });
+            if (mlResponse.data && Array.isArray(mlResponse.data)) {
+                 return mlResponse.data;
+            }
+        } catch (mlError: any) {
+            console.error('ML Service Error (Skipping Ranking):', mlError.message);
+        }
+        
+        return videos;
+
     } catch (error) {
         console.error('Error fetching from YouTube API:', error);
         return MOCK_VIDEOS; // Fallback to mock on error
