@@ -23,7 +23,7 @@ body {
 }
 
 /* Custom Animations */
-@keyframes fadeInUp {
+/* @keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -42,4 +42,4 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-}
+} */

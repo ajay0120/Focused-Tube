@@ -7,6 +7,10 @@ export interface IUser extends Document {
     email: string;
     password: string;
     role: "user" | "admin";
+    interests: string[];
+    disinterests: string[];
+    age?: number;
+    onboardingCompleted: boolean;
     matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
@@ -33,6 +37,21 @@ const userSchema = new Schema<IUser>(
             type: String,
             enum: ["user", "admin"],
             default: "user",
+        },
+        interests: {
+            type: [String],
+            default: [],
+        },
+        disinterests: {
+            type: [String],
+            default: [],
+        },
+        age: {
+            type: Number,
+        },
+        onboardingCompleted: {
+            type: Boolean,
+            default: false,
         },
     },
     {
