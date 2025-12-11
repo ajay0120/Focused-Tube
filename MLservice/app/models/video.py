@@ -6,6 +6,7 @@ class Video(BaseModel):
     title: str
     description: Optional[str] = ""
     channelTitle: Optional[str] = ""
+    thumbnail: Optional[str] = ""
 
 class RankRequest(BaseModel):
     videos: List[Video]
