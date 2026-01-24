@@ -107,6 +107,7 @@ const SearchPage = () => {
                  setSearchBlocked(true);
                  setLoading(false);
                  setVideos([]);
+                 auth?.incrementBlockedCount(); // Increment blocked count in DB
                  return;
              }
         }

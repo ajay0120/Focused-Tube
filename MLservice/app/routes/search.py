@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
-from app.models.video import SearchRequest, Video
+from app.models.video import SearchRequest, SearchResponse, Video
 from app.controllers.search_controller import search_controller
 
 router = APIRouter()
 
-@router.post("/search", response_model=List[Video])
+@router.post("/search", response_model=SearchResponse)
 def search_videos(request: SearchRequest):
     try:
         return search_controller.search(

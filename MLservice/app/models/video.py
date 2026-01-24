@@ -15,3 +15,7 @@ class SearchRequest(BaseModel):
     query: str
     disinterests: List[str]
     videos: List[Video]
+
+class SearchResponse(BaseModel):
+    videos: List[Video]
+    blocked_count: int

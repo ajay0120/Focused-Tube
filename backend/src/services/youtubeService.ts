@@ -1,5 +1,6 @@
 import axios from 'axios';
 import logger from '../utils/logger';
+import User from '../models/User';
 
 interface Video {
     id: string;
@@ -37,7 +38,7 @@ const MOCK_VIDEOS: Video[] = [
     }
 ];
 
-export const searchVideos = async (query: string): Promise<Video[]> => {
+export const searchVideos = async (query: string, user?: any): Promise<Video[]> => {
     try {
         let videos = [];
         
@@ -74,12 +75,30 @@ export const searchVideos = async (query: string): Promise<Video[]> => {
 
         // 2. Rank using ML Service (Falback to original order if fails)
         try {
-            const mlResponse = await axios.post('http://localhost:8000/api/videos/rank', {
+            const mlResponse = await axios.post('http://localhost:8000/api/videos/search', {
+                query: query,
+                disinterests: user?.disinterests || [],
                 videos: videos
             });
-            if (mlResponse.data && Array.isArray(mlResponse.data)) {
-                 logger.info('Videos ranked successfully by ML service');
-                 return mlResponse.data;
+
+            const data = mlResponse.data;
+
+            // Handle new response format { videos: [], blocked_count: number }
+            if (data && Array.isArray(data.videos)) {
+                 logger.info(`Videos ranked successfully. Blocked ${data.blocked_count} videos.`);
+                 
+                 // Update user blocked count if any videos were blocked
+                 if (user && data.blocked_count > 0) {
+                     await User.findByIdAndUpdate(user._id, { 
+                         $inc: { blockedCount: data.blocked_count } 
+                     });
+                     logger.info(`Incremented blocked count for user ${user._id} by ${data.blocked_count}`);
+                 }
+
+                 return data.videos;
+            } else if (Array.isArray(data)) {
+                // Fallback for old response format just in case
+                return data;
             }
         } catch (mlError: any) {
             logger.warn(`ML Service Error (Skipping Ranking): ${mlError.message}`);

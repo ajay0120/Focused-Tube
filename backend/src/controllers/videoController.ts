@@ -16,7 +16,8 @@ export const search = async (req: Request, res: Response) => {
         
         logger.info(`Search query received: ${query}`);
 
-        const videos = await searchVideos(query);
+        // Pass user context to service for personalized filtering
+        const videos = await searchVideos(query, (req as any).user);
         res.json(videos);
 
     } catch (error: any) {

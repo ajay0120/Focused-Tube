@@ -19,3 +19,8 @@ export const getUserProfile = async () => {
     const { data } = await api.get('/users/profile');
     return data;
 };
+
+export const incrementBlockedCount = async () => {
+    const { data } = await api.post('/users/blocked-count/increment', {});
+    return data;
+};

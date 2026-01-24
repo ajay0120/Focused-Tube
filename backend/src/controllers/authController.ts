@@ -137,3 +137,17 @@ export const updateUserProfile = async (req: any, res: Response) => {
         res.status(404).json({ message: 'User not found' });
     }
 };
+// @desc    Increment blocked content count
+// @route   POST /api/users/blocked-count/increment
+// @access  Private
+export const incrementBlockedCount = async (req: any, res: Response) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        user.blockedCount = (user.blockedCount || 0) + 1;
+        await user.save();
+        res.status(200).json({ message: 'Blocked count updated', blockedCount: user.blockedCount });
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
+};

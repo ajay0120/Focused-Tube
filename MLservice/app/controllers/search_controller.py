@@ -44,7 +44,12 @@ class SearchController:
             if not kw_blocked and not sem_blocked:
                 allowed_videos.append(video)
 
-        return bert_service.rank_videos(allowed_videos)
+        ranked_videos = bert_service.rank_videos(allowed_videos)
+        
+        return {
+            "videos": ranked_videos,
+            "blocked_count": len(videos) - len(allowed_videos)
+        }
 
 
 search_controller = SearchController()
