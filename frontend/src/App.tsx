@@ -4,6 +4,7 @@ import LoginPage from './Pages/LoginPage';
 import RegisterPage from './Pages/RegisterPage';
 import OnboardingPage from './Pages/OnboardingPage';
 import ProfilePage from './Pages/ProfilePage';
+import RecommendedPage from './Pages/RecommendedPage';
 import SearchPage from './Pages/SearchPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
@@ -28,6 +29,14 @@ function App() {
             element={
                 <ProtectedRoute>
                     <ProfilePage />
+                </ProtectedRoute>
+            } 
+        />
+        <Route 
+            path="/recommended" 
+            element={
+                <ProtectedRoute>
+                    <RecommendedPage />
                 </ProtectedRoute>
             } 
         />

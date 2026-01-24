@@ -14,3 +14,8 @@ export const updateProfile = async (userData: any) => {
     const { data } = await api.put('/users/profile', userData);
     return data;
 };
+
+export const getUserProfile = async () => {
+    const { data } = await api.get('/users/profile');
+    return data;
+};

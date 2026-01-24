@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
-import { User, Clock, Shield, Loader } from 'lucide-react';
+import { User, Clock, Shield, Loader, Edit2, X, Plus, ChevronRight } from 'lucide-react';
 import { searchVideos } from '../api/video';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface Video {
     id: string;
@@ -17,6 +18,23 @@ const ProfilePage = () => {
     const auth = useContext(AuthContext);
     const [recommended, setRecommended] = useState<Video[]>([]);
     const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editInterests, setEditInterests] = useState<string[]>([]);
+    const [newInterest, setNewInterest] = useState('');
+    const [isEditingDisinterests, setIsEditingDisinterests] = useState(false);
+    const [editDisinterests, setEditDisinterests] = useState<string[]>([]);
+    const [newDisinterest, setNewDisinterest] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (auth?.user?.interests) {
+            setEditInterests(auth.user.interests);
+        }
+        if (auth?.user?.disinterests) {
+            setEditDisinterests(auth.user.disinterests);
+        }
+    }, [auth?.user]);
+
 
     useEffect(() => {
         if (auth?.user?.interests && auth.user.interests.length > 0) {
@@ -26,7 +44,7 @@ const ProfilePage = () => {
                     // Search for the first interest for now
                     const query = auth?.user?.interests?.[0] || 'programming';
                     const data = await searchVideos(query);
-                    setRecommended(data.slice(0, 4)); // Show top 4
+                    setRecommended(data.slice(0, 4));
                 } catch (error) {
                     console.error("Failed to fetch recommendations", error);
                 } finally {
@@ -36,6 +54,50 @@ const ProfilePage = () => {
             fetchRecommended();
         }
     }, [auth?.user?.interests]);
+
+    const handleAddInterest = () => {
+        if (newInterest.trim()) {
+            setEditInterests([...editInterests, newInterest.trim()]);
+            setNewInterest('');
+        }
+    };
+
+    const handleRemoveInterest = (index: number) => {
+        setEditInterests(editInterests.filter((_, i) => i !== index));
+    };
+
+    const handleSaveInterests = async () => {
+        if (auth?.updateUserProfile) {
+            try {
+                await auth.updateUserProfile({ interests: editInterests });
+                setIsEditing(false);
+            } catch (error) {
+                console.error("Failed to update interests", error);
+            }
+        }
+    };
+
+    const handleAddDisinterest = () => {
+        if (newDisinterest.trim()) {
+            setEditDisinterests([...editDisinterests, newDisinterest.trim()]);
+            setNewDisinterest('');
+        }
+    };
+
+    const handleRemoveDisinterest = (index: number) => {
+        setEditDisinterests(editDisinterests.filter((_, i) => i !== index));
+    };
+
+    const handleSaveDisinterests = async () => {
+        if (auth?.updateUserProfile) {
+            try {
+                await auth.updateUserProfile({ disinterests: editDisinterests });
+                setIsEditingDisinterests(false);
+            } catch (error) {
+                console.error("Failed to update disinterests", error);
+            }
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-900 text-white">
@@ -90,7 +152,16 @@ const ProfilePage = () => {
 
                      {/* Interests Section */}
                      <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700">
-                        <h2 className="text-xl font-bold mb-6">Your Interests</h2>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-bold">Your Interests</h2>
+                            <button 
+                                onClick={() => setIsEditing(true)}
+                                className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition"
+                            >
+                                <Edit2 className="w-4 h-4 text-blue-400" />
+                            </button>
+                        </div>
+                        
                         <div className="flex flex-wrap gap-2">
                              {auth?.user?.interests?.map((interest: string, i: number) => (
                                 <span key={i} className="px-4 py-2 bg-gray-700 rounded-full text-sm text-blue-200">
@@ -98,11 +169,129 @@ const ProfilePage = () => {
                                 </span>
                              )) || <p className="text-gray-500">No interests added yet.</p>}
                         </div>
+
+                        {/* Edit Modal */}
+                        {isEditing && (
+                            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                                <div className="bg-gray-800 p-6 rounded-2xl w-full max-w-md border border-gray-700">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-lg font-bold">Edit Interests</h3>
+                                        <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-white">
+                                            <X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <div className="flex gap-2 mb-4">
+                                        <input 
+                                            type="text" 
+                                            value={newInterest}
+                                            onChange={(e) => setNewInterest(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && handleAddInterest()}
+                                            placeholder="Add new interest..."
+                                            className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        />
+                                        <button 
+                                            onClick={handleAddInterest}
+                                            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
+                                        >
+                                            <Plus className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2 mb-6 max-h-60 overflow-y-auto">
+                                        {editInterests.map((interest, i) => (
+                                            <span key={i} className="px-3 py-1 bg-gray-700 rounded-full text-sm text-blue-200 flex items-center gap-2">
+                                                {interest}
+                                                <button onClick={() => handleRemoveInterest(i)} className="hover:text-red-400">
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <button 
+                                        onClick={handleSaveInterests}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold transition"
+                                    >
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                     </div>
+
+                     {/* Disinterests Section */}
+                     <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-bold">Your Disinterests</h2>
+                            <button 
+                                onClick={() => setIsEditingDisinterests(true)}
+                                className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition"
+                            >
+                                <Edit2 className="w-4 h-4 text-red-400" />
+                            </button>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-2">
+                             {auth?.user?.disinterests?.map((disinterest: string, i: number) => (
+                                <span key={i} className="px-4 py-2 bg-gray-700 rounded-full text-sm text-red-200">
+                                    {disinterest}
+                                </span>
+                             )) || <p className="text-gray-500">No disinterests added yet.</p>}
+                        </div>
+
+                        {/* Edit Disinterests Modal */}
+                        {isEditingDisinterests && (
+                            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                                <div className="bg-gray-800 p-6 rounded-2xl w-full max-w-md border border-gray-700">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-lg font-bold">Edit Disinterests</h3>
+                                        <button onClick={() => setIsEditingDisinterests(false)} className="text-gray-400 hover:text-white">
+                                            <X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <div className="flex gap-2 mb-4">
+                                        <input 
+                                            type="text" 
+                                            value={newDisinterest}
+                                            onChange={(e) => setNewDisinterest(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && handleAddDisinterest()}
+                                            placeholder="Add new disinterest..."
+                                            className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                                        />
+                                        <button 
+                                            onClick={handleAddDisinterest}
+                                            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition"
+                                        >
+                                            <Plus className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2 mb-6 max-h-60 overflow-y-auto">
+                                        {editDisinterests.map((interest, i) => (
+                                            <span key={i} className="px-3 py-1 bg-gray-700 rounded-full text-sm text-red-200 flex items-center gap-2">
+                                                {interest}
+                                                <button onClick={() => handleRemoveDisinterest(i)} className="hover:text-red-400">
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <button 
+                                        onClick={handleSaveDisinterests}
+                                        className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl font-bold transition"
+                                    >
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                      </div>
 
                      {/* Recommended Section - NEW */}
                      <div className="bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700">
-                        <h2 className="text-xl font-bold mb-6">Recommended for You</h2>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-bold">Recommended for You</h2>
+                            <Link to="/recommended" className="flex items-center text-blue-400 hover:text-blue-300 text-sm font-semibold transition">
+                                View All <ChevronRight className="w-4 h-4 ml-1" />
+                            </Link>
+                        </div>
                          {loading ? (
                              <div className="flex justify-center p-8">
                                 <Loader className="w-8 h-8 text-blue-500 animate-spin" />

@@ -10,3 +10,8 @@ class Video(BaseModel):
 
 class RankRequest(BaseModel):
     videos: List[Video]
+
+class SearchRequest(BaseModel):
+    query: str
+    disinterests: List[str]
+    videos: List[Video]

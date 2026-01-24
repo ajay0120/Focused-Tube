@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Zap } from 'lucide-react';
 
 const Hero: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <div className="relative overflow-hidden bg-black text-white pt-20 pb-24 lg:pt-32 lg:pb-36">
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
@@ -24,10 +26,18 @@ const Hero: React.FC = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                    <button className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-black bg-white rounded-full hover:bg-gray-200 transition-all transform hover:scale-105">
+                    <button 
+                        onClick={() => navigate('/search')}
+                        className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-black bg-white rounded-full hover:bg-gray-200 transition-all transform hover:scale-105"
+                    >
                         Get Started <ArrowRight className="ml-2 w-5 h-5" />
                     </button>
-                    <button className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-white/10 border border-white/10 rounded-full hover:bg-white/20 transition-all">
+                    <button 
+                        onClick={() => {
+                            document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-white/10 border border-white/10 rounded-full hover:bg-white/20 transition-all"
+                    >
                         Learn More
                     </button>
                 </div>

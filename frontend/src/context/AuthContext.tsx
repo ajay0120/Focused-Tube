@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { login as apiLogin, register as apiRegister, updateProfile as apiUpdateProfile } from '../api/auth';
+import { login as apiLogin, register as apiRegister, updateProfile as apiUpdateProfile, getUserProfile as apiGetUserProfile } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
@@ -38,6 +38,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userInfo = localStorage.getItem('userInfo');
         if (userInfo) {
             setUser(JSON.parse(userInfo));
+            // Fetch fresh profile data to ensure we have latest interests
+            apiGetUserProfile()
+                .then((data) => {
+                    // Preserve the token from existing localStorage since getUserProfile doesn't return it
+                    const currentInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    const updatedUserData = { ...data, token: currentInfo.token };
+                    setUser(updatedUserData);
+                    localStorage.setItem('userInfo', JSON.stringify(updatedUserData));
+                })
+                .catch((err) => {
+                    console.error("Failed to refresh user profile", err);
+                });
         }
         setLoading(false);
     }, []);

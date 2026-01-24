@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
 import generateToken from '../utils/generateToken';
+import logger from '../utils/logger';
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -11,16 +12,21 @@ export const authUser = async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+        logger.info(`User logged in: ${user.email}`);
         res.json({
             _id: user._id,
             name: user.name,
             username: user.username,
             email: user.email,
             role: user.role,
+            interests: user.interests,
+            disinterests: user.disinterests,
+            age: user.age,
             onboardingCompleted: user.onboardingCompleted,
             token: generateToken(user._id.toString()),
         });
     } else {
+        logger.warn(`Failed login attempt for email: ${email}`);
         res.status(401).json({ message: 'Invalid email or password' });
     }
 };
@@ -34,6 +40,7 @@ export const registerUser = async (req: Request, res: Response) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
+        logger.warn(`Registration failed: User already exists - ${email}`);
         res.status(400).json({ message: 'User already exists' });
         return;
     }
@@ -46,16 +53,21 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     if (user) {
+        logger.info(`New user registered: ${user.email}`);
         res.status(201).json({
             _id: user._id,
             name: user.name,
             username: user.username,
             email: user.email,
             role: user.role,
+            interests: user.interests,
+            disinterests: user.disinterests,
+            age: user.age,
             onboardingCompleted: user.onboardingCompleted,
             token: generateToken(user._id.toString()),
         });
     } else {
+        logger.error('Invalid user data during registration');
         res.status(400).json({ message: 'Invalid user data' });
     }
 };
@@ -67,6 +79,7 @@ export const getUserProfile = async (req: any, res: Response) => {
     const user = await User.findById(req.user._id);
 
     if (user) {
+        logger.info(`User profile requested: ${user.email}`);
         res.json({
             _id: user._id,
             name: user.name,
@@ -79,6 +92,7 @@ export const getUserProfile = async (req: any, res: Response) => {
             onboardingCompleted: user.onboardingCompleted,
         });
     } else {
+        logger.error('User not found during profile request');
         res.status(404).json({ message: 'User not found' });
     }
 };
@@ -104,6 +118,7 @@ export const updateUserProfile = async (req: any, res: Response) => {
         }
 
         const updatedUser = await user.save();
+        logger.info(`User profile updated: ${updatedUser.email}`);
 
         res.json({
             _id: updatedUser._id,
@@ -111,10 +126,14 @@ export const updateUserProfile = async (req: any, res: Response) => {
             username: updatedUser.username,
             email: updatedUser.email,
             role: updatedUser.role,
+            interests: updatedUser.interests,
+            disinterests: updatedUser.disinterests,
+            age: updatedUser.age,
             onboardingCompleted: updatedUser.onboardingCompleted,
             token: generateToken(updatedUser._id.toString()),
         });
     } else {
+        logger.error('User not found during profile update');
         res.status(404).json({ message: 'User not found' });
     }
 };

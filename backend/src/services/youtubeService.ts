@@ -1,4 +1,5 @@
 import axios from 'axios';
+import logger from '../utils/logger';
 
 interface Video {
     id: string;
@@ -42,8 +43,12 @@ export const searchVideos = async (query: string): Promise<Video[]> => {
         
         // 1. Fetch from YouTube
         if (!process.env.YOUTUBE_API_KEY) {
-            console.log('Using Mock Data for YouTube Search');
+            logger.info('Using Mock Data for YouTube Search (No API Key)');
             videos = MOCK_VIDEOS.filter(v => v.title.toLowerCase().includes(query.toLowerCase()));
+            if (videos.length === 0) {
+                // specific mock search failed, return all mock videos to show something
+                videos = MOCK_VIDEOS;
+            }
         } else {
             const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
                 params: {
@@ -54,6 +59,8 @@ export const searchVideos = async (query: string): Promise<Video[]> => {
                     key: process.env.YOUTUBE_API_KEY
                 }
             });
+
+            logger.info(`YouTube API called successfully for query: ${query}`);
 
             videos = response.data.items.map((item: any) => ({
                 id: item.id.videoId,
@@ -71,16 +78,25 @@ export const searchVideos = async (query: string): Promise<Video[]> => {
                 videos: videos
             });
             if (mlResponse.data && Array.isArray(mlResponse.data)) {
+                 logger.info('Videos ranked successfully by ML service');
                  return mlResponse.data;
             }
         } catch (mlError: any) {
-            console.error('ML Service Error (Skipping Ranking):', mlError.message);
+            logger.warn(`ML Service Error (Skipping Ranking): ${mlError.message}`);
         }
         
         return videos;
 
-    } catch (error) {
-        console.error('Error fetching from YouTube API:', error);
+    } catch (error: any) {
+        if (axios.isAxiosError(error) && error.response) {
+            const reason = error.response.data?.error?.message || error.message;
+            logger.error(`YouTube API Error (${error.response.status}): ${reason}`);
+            if (error.response.status === 403) {
+                 logger.warn("This usually means your YouTube Data API quota is exceeded or the API key is invalid.");
+            }
+        } else {
+            logger.error(`Error fetching from YouTube API: ${error.message || error}`);
+        }
         return MOCK_VIDEOS; // Fallback to mock on error
     }
 };
