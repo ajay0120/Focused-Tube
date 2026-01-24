@@ -8,28 +8,43 @@ class SearchController:
         self,
         query: str,
         disinterests: List[str],
-        videos: List[Video],
-        threshold: float = 0.75
+        videos: List[Video]
     ) -> List[Video]:
 
-        # 1️⃣ Filter using embeddings
-        allowed_videos = []
-        for video in videos:
-            combined_text = f"{video.title} {video.description} {video.channelTitle}"
+        disinterest_keywords = [d.lower() for d in disinterests]
 
-            blocked, _ = embedding_service.is_blocked(
-                query=combined_text,
-                disinterests=disinterests,
-                threshold=threshold
+        texts = []
+        keyword_block = []
+
+        for v in videos:
+            combined_text = (
+                f"{v.title} "
+                f"{v.description} "
+                f"{v.channelTitle}"
+            ).lower()
+
+            texts.append(
+                f"{v.title}. {v.description}. Channel name: {v.channelTitle}."
             )
 
-            if not blocked:
+            # 🔴 HARD keyword guardrail
+            keyword_block.append(
+                any(k in combined_text for k in disinterest_keywords)
+            )
+
+        # 🔹 Semantic blocking
+        semantic_block = embedding_service.block_mask(
+            texts=texts,
+            disinterests=disinterests,
+            threshold=0.6   # lower, because keyword is primary
+        )
+
+        allowed_videos = []
+        for video, kw_blocked, sem_blocked in zip(videos, keyword_block, semantic_block):
+            if not kw_blocked and not sem_blocked:
                 allowed_videos.append(video)
 
-        # 2️⃣ Rank remaining videos
-        ranked_videos = bert_service.rank_videos(allowed_videos)
-
-        return ranked_videos
+        return bert_service.rank_videos(allowed_videos)
 
 
 search_controller = SearchController()
