@@ -145,7 +145,7 @@ const ProfilePage = () => {
                             </div>
                             <div>
                                 <h3 className="text-gray-400 text-sm">Distractions Blocked</h3>
-                                <p className="text-2xl font-bold text-white">0</p>
+                                <p className="text-2xl font-bold text-white">{auth?.user?.distractionsBlocked || 0}</p>
                             </div>
                         </div>
                      </div>

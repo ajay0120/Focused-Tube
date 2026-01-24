@@ -10,7 +10,7 @@ export interface IUser extends Document {
     interests: string[];
     disinterests: string[];
     age?: number;
-    blockedCount: number;
+    distractionsBlocked: number;
     onboardingCompleted: boolean;
     matchPassword(enteredPassword: string): Promise<boolean>;
 }
@@ -50,7 +50,7 @@ const userSchema = new Schema<IUser>(
         age: {
             type: Number,
         },
-        blockedCount: {
+        distractionsBlocked: {
             type: Number,
             default: 0,
         },

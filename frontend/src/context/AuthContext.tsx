@@ -14,7 +14,7 @@ interface User {
     interests?: string[];
     disinterests?: string[];
     age?: number;
-    blockedCount?: number;
+    distractionsBlocked?: number;
 }
 
 interface AuthContextType {
@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             if (!user) return;
             // Optimistically update UI
-            const updatedUser = { ...user, blockedCount: (user.blockedCount || 0) + 1 };
+            const updatedUser = { ...user, distractionsBlocked: (user.distractionsBlocked || 0) + 1 };
             setUser(updatedUser);
             // localStorage update optional for this counter as it's volatile, but good for consistency
             localStorage.setItem('userInfo', JSON.stringify(updatedUser));

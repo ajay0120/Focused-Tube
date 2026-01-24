@@ -90,7 +90,7 @@ export const searchVideos = async (query: string, user?: any): Promise<Video[]> 
                  // Update user blocked count if any videos were blocked
                  if (user && data.blocked_count > 0) {
                      await User.findByIdAndUpdate(user._id, { 
-                         $inc: { blockedCount: data.blocked_count } 
+                         $inc: { distractionsBlocked: data.blocked_count } 
                      });
                      logger.info(`Incremented blocked count for user ${user._id} by ${data.blocked_count}`);
                  }

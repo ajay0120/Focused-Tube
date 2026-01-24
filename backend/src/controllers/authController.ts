@@ -90,6 +90,7 @@ export const getUserProfile = async (req: any, res: Response) => {
             disinterests: user.disinterests,
             age: user.age,
             onboardingCompleted: user.onboardingCompleted,
+            distractionsBlocked: user.distractionsBlocked,
         });
     } else {
         logger.error('User not found during profile request');
@@ -144,9 +145,9 @@ export const incrementBlockedCount = async (req: any, res: Response) => {
     const user = await User.findById(req.user._id);
 
     if (user) {
-        user.blockedCount = (user.blockedCount || 0) + 1;
+        user.distractionsBlocked = (user.distractionsBlocked || 0) + 1;
         await user.save();
-        res.status(200).json({ message: 'Blocked count updated', blockedCount: user.blockedCount });
+        res.status(200).json({ message: 'Blocked count updated', blockedCount: user.distractionsBlocked });
     } else {
         res.status(404).json({ message: 'User not found' });
     }
