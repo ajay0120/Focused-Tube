@@ -24,3 +24,18 @@ export const incrementBlockedCount = async () => {
     const { data } = await api.post('/users/blocked-count/increment', {});
     return data;
 };
+
+export const googleLogin = async (token: string) => {
+    const { data } = await api.post('/users/google-login', { token });
+    return data;
+};
+
+export const verifyOtp = async (email: string, otp: string) => {
+    const { data } = await api.post('/users/verify-otp', { email, otp });
+    return data;
+};
+
+export const resendOtp = async (email: string) => {
+    const { data } = await api.post('/users/resend-otp', { email });
+    return data;
+};

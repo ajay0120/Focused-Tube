@@ -12,6 +12,13 @@ export interface IUser extends Document {
     age?: number;
     distractionsBlocked: number;
     onboardingCompleted: boolean;
+    googleId?: string;
+    isVerified: boolean;
+    otp?: {
+        code: string;
+        expiresAt: Date;
+        lastSent: Date;
+    };
     matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
@@ -57,6 +64,18 @@ const userSchema = new Schema<IUser>(
         onboardingCompleted: {
             type: Boolean,
             default: false,
+        },
+        googleId: {
+            type: String,
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        otp: {
+            code: String,
+            expiresAt: Date,
+            lastSent: Date,
         },
     },
     {
