@@ -1,323 +1,386 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
-import { User, Clock, Shield, Loader, Edit2, X, Plus, ChevronRight } from 'lucide-react';
-import { searchVideos } from '../api/video';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
+import {
+  User,
+  Clock,
+  Shield,
+  Loader,
+  Edit2,
+  X,
+  Plus,
+  ChevronRight,
+} from "lucide-react";
+import { searchVideos } from "../api/video";
+import { useNavigate, Link } from "react-router-dom";
 
 interface Video {
-    id: string;
-    title: string;
-    description: string;
-    thumbnail: string;
-    channelTitle: string;
-    publishedAt: string;
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  channelTitle: string;
+  publishedAt: string;
 }
 
 const ProfilePage = () => {
-    const auth = useContext(AuthContext);
-    const [recommended, setRecommended] = useState<Video[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editInterests, setEditInterests] = useState<string[]>([]);
-    const [newInterest, setNewInterest] = useState('');
-    const [isEditingDisinterests, setIsEditingDisinterests] = useState(false);
-    const [editDisinterests, setEditDisinterests] = useState<string[]>([]);
-    const [newDisinterest, setNewDisinterest] = useState('');
-    const navigate = useNavigate();
+  const auth = useContext(AuthContext);
+  const [recommended, setRecommended] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editInterests, setEditInterests] = useState<string[]>([]);
+  const [newInterest, setNewInterest] = useState("");
+  const [isEditingDisinterests, setIsEditingDisinterests] = useState(false);
+  const [editDisinterests, setEditDisinterests] = useState<string[]>([]);
+  const [newDisinterest, setNewDisinterest] = useState("");
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (auth?.user?.interests) {
-            setEditInterests(auth.user.interests);
+  useEffect(() => {
+    if (auth?.user?.interests) {
+      setEditInterests(auth.user.interests);
+    }
+    if (auth?.user?.disinterests) {
+      setEditDisinterests(auth.user.disinterests);
+    }
+  }, [auth?.user]);
+
+  useEffect(() => {
+    if (auth?.user?.interests && auth.user.interests.length > 0) {
+      const fetchRecommended = async () => {
+        setLoading(true);
+        try {
+          // Search for the first interest for now
+          const query = auth?.user?.interests?.[0] || "programming";
+          const data = await searchVideos(query);
+          setRecommended(data.slice(0, 4));
+        } catch (error) {
+          console.error("Failed to fetch recommendations", error);
+        } finally {
+          setLoading(false);
         }
-        if (auth?.user?.disinterests) {
-            setEditDisinterests(auth.user.disinterests);
-        }
-    }, [auth?.user]);
+      };
+      fetchRecommended();
+    }
+  }, [auth?.user?.interests]);
 
+  const handleAddInterest = () => {
+    if (newInterest.trim()) {
+      setEditInterests([...editInterests, newInterest.trim()]);
+      setNewInterest("");
+    }
+  };
 
-    useEffect(() => {
-        if (auth?.user?.interests && auth.user.interests.length > 0) {
-            const fetchRecommended = async () => {
-                setLoading(true);
-                try {
-                    // Search for the first interest for now
-                    const query = auth?.user?.interests?.[0] || 'programming';
-                    const data = await searchVideos(query);
-                    setRecommended(data.slice(0, 4));
-                } catch (error) {
-                    console.error("Failed to fetch recommendations", error);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            fetchRecommended();
-        }
-    }, [auth?.user?.interests]);
+  const handleRemoveInterest = (index: number) => {
+    setEditInterests(editInterests.filter((_, i) => i !== index));
+  };
 
-    const handleAddInterest = () => {
-        if (newInterest.trim()) {
-            setEditInterests([...editInterests, newInterest.trim()]);
-            setNewInterest('');
-        }
-    };
+  const handleSaveInterests = async () => {
+    if (auth?.updateProfile) {
+      try {
+        await auth.updateProfile({ interests: editInterests });
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Failed to update interests", error);
+      }
+    }
+  };
 
-    const handleRemoveInterest = (index: number) => {
-        setEditInterests(editInterests.filter((_, i) => i !== index));
-    };
+  const handleAddDisinterest = () => {
+    if (newDisinterest.trim()) {
+      setEditDisinterests([...editDisinterests, newDisinterest.trim()]);
+      setNewDisinterest("");
+    }
+  };
 
-    const handleSaveInterests = async () => {
-        if (auth?.updateUserProfile) {
-            try {
-                await auth.updateUserProfile({ interests: editInterests });
-                setIsEditing(false);
-            } catch (error) {
-                console.error("Failed to update interests", error);
-            }
-        }
-    };
+  const handleRemoveDisinterest = (index: number) => {
+    setEditDisinterests(editDisinterests.filter((_, i) => i !== index));
+  };
 
-    const handleAddDisinterest = () => {
-        if (newDisinterest.trim()) {
-            setEditDisinterests([...editDisinterests, newDisinterest.trim()]);
-            setNewDisinterest('');
-        }
-    };
+  const handleSaveDisinterests = async () => {
+    if (auth?.updateProfile) {
+      try {
+        await auth.updateProfile({ disinterests: editDisinterests });
+        setIsEditingDisinterests(false);
+      } catch (error) {
+        console.error("Failed to update disinterests", error);
+      }
+    }
+  };
 
-    const handleRemoveDisinterest = (index: number) => {
-        setEditDisinterests(editDisinterests.filter((_, i) => i !== index));
-    };
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <Navbar />
 
-    const handleSaveDisinterests = async () => {
-        if (auth?.updateUserProfile) {
-            try {
-                await auth.updateUserProfile({ disinterests: editDisinterests });
-                setIsEditingDisinterests(false);
-            } catch (error) {
-                console.error("Failed to update disinterests", error);
-            }
-        }
-    };
+      <main className="container mx-auto px-4 py-8 mt-16">
+        <div className="max-w-4xl mx-auto">
+          {/* Header Section */}
+          <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700 flex items-center gap-6">
+            <div className="w-24 h-24 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-4xl font-bold">
+              {auth?.user?.name ? (
+                auth.user.name.charAt(0).toUpperCase()
+              ) : (
+                <User />
+              )}
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold">{auth?.user?.name}</h1>
+              <p className="text-gray-400">@{auth?.user?.username || "user"}</p>
+              <div className="flex gap-2 mt-3">
+                <span className="px-3 py-1 bg-gray-700 rounded-full text-xs text-gray-300">
+                  {auth?.user?.role || "Member"}
+                </span>
+                {auth?.user?.age && (
+                  <span className="px-3 py-1 bg-gray-700 rounded-full text-xs text-gray-300">
+                    Age: {auth.user.age}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
 
-    return (
-        <div className="min-h-screen bg-gray-900 text-white">
-            <Navbar />
-            
-            <main className="container mx-auto px-4 py-8 mt-16">
-                <div className="max-w-4xl mx-auto">
-                    {/* Header Section */}
-                    <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700 flex items-center gap-6">
-                        <div className="w-24 h-24 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-4xl font-bold">
-                            {auth?.user?.name ? auth.user.name.charAt(0).toUpperCase() : <User />}
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold">
-                                {auth?.user?.name}
-                            </h1>
-                            <p className="text-gray-400">@{auth?.user?.username || 'user'}</p>
-                            <div className="flex gap-2 mt-3">
-                                <span className="px-3 py-1 bg-gray-700 rounded-full text-xs text-gray-300">
-                                    {auth?.user?.role || 'Member'}
-                                </span>
-                                {auth?.user?.age && (
-                                     <span className="px-3 py-1 bg-gray-700 rounded-full text-xs text-gray-300">
-                                        Age: {auth.user.age}
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex items-center gap-4">
+              <div className="p-3 bg-green-500/10 rounded-lg">
+                <Clock className="w-8 h-8 text-green-500" />
+              </div>
+              <div>
+                <h3 className="text-gray-400 text-sm">Total Focus Time</h3>
+                <p className="text-2xl font-bold text-white">0h 0m</p>
+              </div>
+            </div>
+            <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex items-center gap-4">
+              <div className="p-3 bg-blue-500/10 rounded-lg">
+                <Shield className="w-8 h-8 text-blue-500" />
+              </div>
+              <div>
+                <h3 className="text-gray-400 text-sm">Distractions Blocked</h3>
+                <p className="text-2xl font-bold text-white">
+                  {auth?.user?.distractionsBlocked || 0}
+                </p>
+              </div>
+            </div>
+          </div>
 
-                    {/* Stats Grid */}
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex items-center gap-4">
-                            <div className="p-3 bg-green-500/10 rounded-lg">
-                                <Clock className="w-8 h-8 text-green-500" />
-                            </div>
-                            <div>
-                                <h3 className="text-gray-400 text-sm">Total Focus Time</h3>
-                                <p className="text-2xl font-bold text-white">0h 0m</p>
-                            </div>
-                        </div>
-                        <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex items-center gap-4">
-                            <div className="p-3 bg-blue-500/10 rounded-lg">
-                                <Shield className="w-8 h-8 text-blue-500" />
-                            </div>
-                            <div>
-                                <h3 className="text-gray-400 text-sm">Distractions Blocked</h3>
-                                <p className="text-2xl font-bold text-white">{auth?.user?.distractionsBlocked || 0}</p>
-                            </div>
-                        </div>
-                     </div>
+          {/* Interests Section */}
+          <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold">Your Interests</h2>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition"
+              >
+                <Edit2 className="w-4 h-4 text-blue-400" />
+              </button>
+            </div>
 
-                     {/* Interests Section */}
-                     <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold">Your Interests</h2>
-                            <button 
-                                onClick={() => setIsEditing(true)}
-                                className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition"
-                            >
-                                <Edit2 className="w-4 h-4 text-blue-400" />
-                            </button>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-2">
-                             {auth?.user?.interests?.map((interest: string, i: number) => (
-                                <span key={i} className="px-4 py-2 bg-gray-700 rounded-full text-sm text-blue-200">
-                                    {interest}
-                                </span>
-                             )) || <p className="text-gray-500">No interests added yet.</p>}
-                        </div>
+            <div className="flex flex-wrap gap-2">
+              {auth?.user?.interests?.map((interest: string, i: number) => (
+                <span
+                  key={i}
+                  className="px-4 py-2 bg-gray-700 rounded-full text-sm text-blue-200"
+                >
+                  {interest}
+                </span>
+              )) || <p className="text-gray-500">No interests added yet.</p>}
+            </div>
 
-                        {/* Edit Modal */}
-                        {isEditing && (
-                            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-                                <div className="bg-gray-800 p-6 rounded-2xl w-full max-w-md border border-gray-700">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h3 className="text-lg font-bold">Edit Interests</h3>
-                                        <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-white">
-                                            <X className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                    <div className="flex gap-2 mb-4">
-                                        <input 
-                                            type="text" 
-                                            value={newInterest}
-                                            onChange={(e) => setNewInterest(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleAddInterest()}
-                                            placeholder="Add new interest..."
-                                            className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                        <button 
-                                            onClick={handleAddInterest}
-                                            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
-                                        >
-                                            <Plus className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2 mb-6 max-h-60 overflow-y-auto">
-                                        {editInterests.map((interest, i) => (
-                                            <span key={i} className="px-3 py-1 bg-gray-700 rounded-full text-sm text-blue-200 flex items-center gap-2">
-                                                {interest}
-                                                <button onClick={() => handleRemoveInterest(i)} className="hover:text-red-400">
-                                                    <X className="w-3 h-3" />
-                                                </button>
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <button 
-                                        onClick={handleSaveInterests}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold transition"
-                                    >
-                                        Save Changes
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                     </div>
-
-                     {/* Disinterests Section */}
-                     <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold">Your Disinterests</h2>
-                            <button 
-                                onClick={() => setIsEditingDisinterests(true)}
-                                className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition"
-                            >
-                                <Edit2 className="w-4 h-4 text-red-400" />
-                            </button>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-2">
-                             {auth?.user?.disinterests?.map((disinterest: string, i: number) => (
-                                <span key={i} className="px-4 py-2 bg-gray-700 rounded-full text-sm text-red-200">
-                                    {disinterest}
-                                </span>
-                             )) || <p className="text-gray-500">No disinterests added yet.</p>}
-                        </div>
-
-                        {/* Edit Disinterests Modal */}
-                        {isEditingDisinterests && (
-                            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-                                <div className="bg-gray-800 p-6 rounded-2xl w-full max-w-md border border-gray-700">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h3 className="text-lg font-bold">Edit Disinterests</h3>
-                                        <button onClick={() => setIsEditingDisinterests(false)} className="text-gray-400 hover:text-white">
-                                            <X className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                    <div className="flex gap-2 mb-4">
-                                        <input 
-                                            type="text" 
-                                            value={newDisinterest}
-                                            onChange={(e) => setNewDisinterest(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleAddDisinterest()}
-                                            placeholder="Add new disinterest..."
-                                            className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                                        />
-                                        <button 
-                                            onClick={handleAddDisinterest}
-                                            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition"
-                                        >
-                                            <Plus className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2 mb-6 max-h-60 overflow-y-auto">
-                                        {editDisinterests.map((interest, i) => (
-                                            <span key={i} className="px-3 py-1 bg-gray-700 rounded-full text-sm text-red-200 flex items-center gap-2">
-                                                {interest}
-                                                <button onClick={() => handleRemoveDisinterest(i)} className="hover:text-red-400">
-                                                    <X className="w-3 h-3" />
-                                                </button>
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <button 
-                                        onClick={handleSaveDisinterests}
-                                        className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl font-bold transition"
-                                    >
-                                        Save Changes
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                     </div>
-
-                     {/* Recommended Section - NEW */}
-                     <div className="bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold">Recommended for You</h2>
-                            <Link to="/recommended" className="flex items-center text-blue-400 hover:text-blue-300 text-sm font-semibold transition">
-                                View All <ChevronRight className="w-4 h-4 ml-1" />
-                            </Link>
-                        </div>
-                         {loading ? (
-                             <div className="flex justify-center p-8">
-                                <Loader className="w-8 h-8 text-blue-500 animate-spin" />
-                             </div>
-                         ) : recommended.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {recommended.map((video) => (
-                                    <div key={video.id} className="bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:ring-2 hover:ring-blue-500 transition duration-200">
-                                        <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer" className="flex">
-                                            <img src={video.thumbnail} alt={video.title} className="w-32 h-24 object-cover" />
-                                            <div className="p-3">
-                                                <h3 className="text-sm font-bold text-white line-clamp-2">{video.title}</h3>
-                                                <p className="text-xs text-gray-400 mt-1">{video.channelTitle}</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                ))}
-                            </div>
-                         ) : (
-                             <p className="text-gray-500">Add interests to see recommendations.</p>
-                         )}
-                     </div>
+            {/* Edit Modal */}
+            {isEditing && (
+              <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                <div className="bg-gray-800 p-6 rounded-2xl w-full max-w-md border border-gray-700">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold">Edit Interests</h3>
+                    <button
+                      onClick={() => setIsEditing(false)}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="flex gap-2 mb-4">
+                    <input
+                      type="text"
+                      value={newInterest}
+                      onChange={(e) => setNewInterest(e.target.value)}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleAddInterest()
+                      }
+                      placeholder="Add new interest..."
+                      className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={handleAddInterest}
+                      className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-6 max-h-60 overflow-y-auto">
+                    {editInterests.map((interest, i) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 bg-gray-700 rounded-full text-sm text-blue-200 flex items-center gap-2"
+                      >
+                        {interest}
+                        <button
+                          onClick={() => handleRemoveInterest(i)}
+                          className="hover:text-red-400"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    onClick={handleSaveInterests}
+                    className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold transition"
+                  >
+                    Save Changes
+                  </button>
                 </div>
-            </main>
+              </div>
+            )}
+          </div>
+
+          {/* Disinterests Section */}
+          <div className="bg-gray-800 rounded-2xl p-8 mb-8 shadow-xl border border-gray-700">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold">Your Disinterests</h2>
+              <button
+                onClick={() => setIsEditingDisinterests(true)}
+                className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition"
+              >
+                <Edit2 className="w-4 h-4 text-red-400" />
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {auth?.user?.disinterests?.map(
+                (disinterest: string, i: number) => (
+                  <span
+                    key={i}
+                    className="px-4 py-2 bg-gray-700 rounded-full text-sm text-red-200"
+                  >
+                    {disinterest}
+                  </span>
+                ),
+              ) || <p className="text-gray-500">No disinterests added yet.</p>}
+            </div>
+
+            {/* Edit Disinterests Modal */}
+            {isEditingDisinterests && (
+              <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                <div className="bg-gray-800 p-6 rounded-2xl w-full max-w-md border border-gray-700">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold">Edit Disinterests</h3>
+                    <button
+                      onClick={() => setIsEditingDisinterests(false)}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="flex gap-2 mb-4">
+                    <input
+                      type="text"
+                      value={newDisinterest}
+                      onChange={(e) => setNewDisinterest(e.target.value)}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleAddDisinterest()
+                      }
+                      placeholder="Add new disinterest..."
+                      className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                    <button
+                      onClick={handleAddDisinterest}
+                      className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-6 max-h-60 overflow-y-auto">
+                    {editDisinterests.map((interest, i) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 bg-gray-700 rounded-full text-sm text-red-200 flex items-center gap-2"
+                      >
+                        {interest}
+                        <button
+                          onClick={() => handleRemoveDisinterest(i)}
+                          className="hover:text-red-400"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    onClick={handleSaveDisinterests}
+                    className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl font-bold transition"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Recommended Section - NEW */}
+          <div className="bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold">Recommended for You</h2>
+              <Link
+                to="/recommended"
+                className="flex items-center text-blue-400 hover:text-blue-300 text-sm font-semibold transition"
+              >
+                View All <ChevronRight className="w-4 h-4 ml-1" />
+              </Link>
+            </div>
+            {loading ? (
+              <div className="flex justify-center p-8">
+                <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+              </div>
+            ) : recommended.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {recommended.map((video) => (
+                  <div
+                    key={video.id}
+                    className="bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:ring-2 hover:ring-blue-500 transition duration-200"
+                  >
+                    <a
+                      href={`https://www.youtube.com/watch?v=${video.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex"
+                    >
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-32 h-24 object-cover"
+                      />
+                      <div className="p-3">
+                        <h3 className="text-sm font-bold text-white line-clamp-2">
+                          {video.title}
+                        </h3>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {video.channelTitle}
+                        </p>
+                      </div>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">
+                Add interests to see recommendations.
+              </p>
+            )}
+          </div>
         </div>
-    );
+      </main>
+    </div>
+  );
 };
 
 export default ProfilePage;
