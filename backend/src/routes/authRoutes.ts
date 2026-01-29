@@ -1,6 +1,6 @@
 import express from 'express';
-import { authUser, registerUser, getUserProfile, updateUserProfile, incrementBlockedCount, verifyOtp, resendOtp, googleLogin } from '../controllers/authController';
-import { protect } from '../middleware/authMiddleware';
+import { authUser, registerUser, verifyOtp, resendOtp, googleLogin, forgotPassword, resetPassword } from '../controllers/authController';
+
 
 const router = express.Router();
 
@@ -9,7 +9,8 @@ router.post('/login', authUser);
 router.post('/google-login', googleLogin);
 router.post('/verify-otp', verifyOtp);
 router.post('/resend-otp', resendOtp);
-router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
-router.route('/blocked-count/increment').post(protect, incrementBlockedCount);
+router.route('/forgot-password').post(forgotPassword);
+router.route('/reset-password').post(resetPassword);
+
 
 export default router;

@@ -110,87 +110,6 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 };
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
-export const getUserProfile = async (req: any, res: Response) => {
-    const user = await User.findById(req.user._id);
-
-    if (user) {
-        logger.info(`User profile requested: ${user.email}`);
-        res.json({
-            _id: user._id,
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            interests: user.interests,
-            disinterests: user.disinterests,
-            age: user.age,
-            onboardingCompleted: user.onboardingCompleted,
-            distractionsBlocked: user.distractionsBlocked,
-        });
-    } else {
-        logger.error('User not found during profile request');
-        res.status(404).json({ message: 'User not found' });
-    }
-};
-
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
-export const updateUserProfile = async (req: any, res: Response) => {
-    const user = await User.findById(req.user._id);
-
-    if (user) {
-        user.name = req.body.name || user.name;
-        user.username = req.body.username || user.username;
-        user.email = req.body.email || user.email;
-        if (req.body.password) {
-            user.password = req.body.password;
-        }
-        user.interests = req.body.interests || user.interests;
-        user.disinterests = req.body.disinterests || user.disinterests;
-        user.age = req.body.age || user.age;
-        if (req.body.onboardingCompleted !== undefined) {
-             user.onboardingCompleted = req.body.onboardingCompleted;
-        }
-
-        const updatedUser = await user.save();
-        logger.info(`User profile updated: ${updatedUser.email}`);
-
-        res.json({
-            _id: updatedUser._id,
-            name: updatedUser.name,
-            username: updatedUser.username,
-            email: updatedUser.email,
-            role: updatedUser.role,
-            interests: updatedUser.interests,
-            disinterests: updatedUser.disinterests,
-            age: updatedUser.age,
-            onboardingCompleted: updatedUser.onboardingCompleted,
-            token: generateToken(updatedUser._id.toString()),
-        });
-    } else {
-        logger.error('User not found during profile update');
-        res.status(404).json({ message: 'User not found' });
-    }
-};
-// @desc    Increment blocked content count
-// @route   POST /api/users/blocked-count/increment
-// @access  Private
-export const incrementBlockedCount = async (req: any, res: Response) => {
-    const user = await User.findById(req.user._id);
-
-    if (user) {
-        user.distractionsBlocked = (user.distractionsBlocked || 0) + 1;
-        await user.save();
-        res.status(200).json({ message: 'Blocked count updated', blockedCount: user.distractionsBlocked });
-    } else {
-        res.status(404).json({ message: 'User not found' });
-    }
-};
-
 // @desc    Verify OTP
 // @route   POST /api/users/verify-otp
 // @access  Public
@@ -318,13 +237,15 @@ export const googleLogin = async (req: Request, res: Response) => {
                 user.googleId = googleId;
                 await user.save();
             }
-             res.json({
+            res.json({
                 _id: user._id,
                 name: user.name,
                 username: user.username,
                 email: user.email,
                 role: user.role,
                 isVerified: true,
+                onboardingCompleted: user.onboardingCompleted,
+                isNewUser: false,
                 token: generateToken(user._id.toString()),
             });
         } else {
@@ -348,6 +269,7 @@ export const googleLogin = async (req: Request, res: Response) => {
                 role: user.role,
                 isVerified: true,
                 onboardingCompleted: false,
+                isNewUser: true,
                 token: generateToken(user._id.toString()),
             });
         }
@@ -357,3 +279,75 @@ export const googleLogin = async (req: Request, res: Response) => {
         res.status(400).json({ message: 'Google Login Failed' });
     }
 };
+
+// @desc    Forgot Password - Send OTP
+// @route   POST /api/users/forgot-password
+// @access  Public
+export const forgotPassword = async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+    }
+
+    // Generate OTP
+    const otpCode = generateOTP();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+
+    user.otp = {
+        code: otpCode,
+        expiresAt: otpExpires,
+        lastSent: new Date(),
+    };
+
+    await user.save();
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'FocusedTube - Password Reset Request',
+            message: `You requested a password reset. Your verification code is: ${otpCode}. It expires in 10 minutes.`,
+        });
+        logger.info(`Password reset OTP sent to ${user.email}`);
+        res.json({ message: 'OTP sent to your email' });
+    } catch (error) {
+        logger.error(`Failed to send password reset OTP to ${user.email}`);
+        user.otp = undefined;
+        await user.save();
+        res.status(500).json({ message: 'Failed to send OTP' });
+    }
+};
+
+// @desc    Reset Password
+// @route   POST /api/users/reset-password
+// @access  Public
+export const resetPassword = async (req: Request, res: Response) => {
+    const { email, otp, newPassword } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+    }
+
+    if (user.otp && user.otp.code === otp) {
+        if (new Date() > user.otp.expiresAt) {
+            res.status(400).json({ message: 'OTP expired' });
+            return;
+        }
+
+        user.password = newPassword;
+        user.otp = undefined; // Clear OTP
+        await user.save();
+
+        logger.info(`Password reset successful for: ${user.email}`);
+        res.json({ message: 'Password reset successful. You can now login.' });
+    } else {
+        res.status(400).json({ message: 'Invalid OTP' });
+    }
+};
+

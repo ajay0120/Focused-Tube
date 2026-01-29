@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './config/db';
 import authRoutes from './routes/authRoutes';
 import videoRoutes from './routes/videoRoutes';
+import userRoutes from './routes/userRoutes';
 import logger from './utils/logger';
 import { notFound, errorHandler } from './middleware/errorMiddleware';
 
@@ -23,11 +24,13 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
+    logger.info('API is running...');
     res.send('API is running...');
 });
 
-app.use('/api/users', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/videos', videoRoutes);
+app.use('/api/users', userRoutes);
 
 // Error Handling middlewares
 app.use(notFound);

@@ -36,6 +36,13 @@ const ProfilePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (auth?.refetchUser) {
+      auth.refetchUser();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (auth?.user?.interests) {
       setEditInterests(auth.user.interests);
     }
