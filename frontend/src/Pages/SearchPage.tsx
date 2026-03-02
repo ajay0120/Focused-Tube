@@ -23,7 +23,7 @@ const SearchPage = () => {
     const [blockedCount, setBlockedCount] = useState(0);
     const [searchBlocked, setSearchBlocked] = useState(false);
 
-    // Robust blocking check: matches exact keywords or word variations (singular/plural)
+    // Robust blocking check: matches exact keywords or word variations (singular/plural + substring)
     const checkIfBlocked = (text: string, disinterests: string[]) => {
         const textLower = text.toLowerCase();
         const keywords = disinterests.map(d => d.toLowerCase());
@@ -36,16 +36,16 @@ const SearchPage = () => {
             // e.g. "prank" (in text) matches "pranks" (keyword)
             const words = textLower.match(/\w+/g) || [];
             return words.some(word => 
-                (word.length >= 3 && keyword.includes(word)) || 
-                (keyword.length >= 3 && word.includes(keyword))
+                (word.length >= 4 && keyword.includes(word)) || 
+                (keyword.length >= 4 && word.includes(keyword)) ||
+                word === keyword
             );
         });
     };
 
     const filterVideos = (videosToFilter: Video[]) => {
         if (!auth?.user?.disinterests || auth.user.disinterests.length === 0) {
-            setBlockedCount(0);
-            return videosToFilter;
+            return { filtered: videosToFilter, blocked: 0 };
         }
 
         const disinterests = auth.user.disinterests.map(d => d.toLowerCase());
@@ -66,8 +66,7 @@ const SearchPage = () => {
             return true;
         });
 
-        setBlockedCount(blocked);
-        return filtered;
+        return { filtered, blocked };
     };
 
     useEffect(() => {
@@ -76,8 +75,15 @@ const SearchPage = () => {
                 setLoading(true);
                 try {
                      const q = auth.user.interests[0];
-                     const data = await searchVideos(q);
-                     setRecommendedVideos(filterVideos(data));
+                     const data = await searchVideos<Video>(q);
+                     if (data.blockedAll) {
+                         setRecommendedVideos([]);
+                         setBlockedCount(data.blockedCount || 0);
+                     } else {
+                         const { filtered, blocked } = filterVideos(data.videos);
+                         setRecommendedVideos(filtered);
+                         setBlockedCount((data.blockedCount || 0) + blocked);
+                     }
                 } catch (error) {
                     console.error("Failed to fetch recommendations", error);
                 } finally {
@@ -99,7 +105,7 @@ const SearchPage = () => {
         setError('');
         setSearchBlocked(false);
 
-        // Check for disinterests in query
+        // Check for disinterests in query (client-side fast path)
         if (auth?.user?.disinterests) {
              const isBlocked = checkIfBlocked(query, auth.user.disinterests);
 
@@ -113,8 +119,18 @@ const SearchPage = () => {
         }
 
         try {
-            const data = await searchVideos(query);
-            setVideos(filterVideos(data));
+            const data = await searchVideos<Video>(query);
+
+            if (data.blockedAll) {
+                setSearchBlocked(true);
+                setVideos([]);
+                setBlockedCount(data.blockedCount || 0);
+                return;
+            }
+
+            const { filtered, blocked } = filterVideos(data.videos);
+            setVideos(filtered);
+            setBlockedCount((data.blockedCount || 0) + blocked);
         } catch (err) {
             setError('Failed to fetch videos. Please try again.');
             console.error(err);
@@ -126,11 +142,13 @@ const SearchPage = () => {
     // Re-filter when disinterests change (e.g. if user edits profile in another tab, though context update might lag without refresh)
     // Actually, we should depend on auth.user.disinterests for the initial load filter
     useEffect(() => {
-        if (videos.length > 0) {
-             setVideos(prev => filterVideos(prev)); // This might filter already filtered list, which is fine but better to refetch. 
-             // Ideally we shouldn't re-filter purely on client without original list, but for now let's just apply to new fetches.
-             // The fetchRecommendations effect already depends on user, so it will re-run.
-        }
+            if (videos.length > 0) {
+                 const { filtered, blocked } = filterVideos(videos);
+                 setVideos(filtered); // This might filter already filtered list, which is fine but better to refetch. 
+                 setBlockedCount(blocked);
+                 // Ideally we shouldn't re-filter purely on client without original list, but for now let's just apply to new fetches.
+                 // The fetchRecommendations effect already depends on user, so it will re-run.
+            }
     }, [auth?.user?.disinterests]);
 
     return (

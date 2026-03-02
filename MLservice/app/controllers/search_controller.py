@@ -1,54 +1,88 @@
+import logging
 from typing import List
 from app.models.video import Video
 from app.services.embedding_service import embedding_service
 from app.services.bert_service import bert_service
+from app.services.youtube_service import youtube_service
+
+logger = logging.getLogger(__name__)
+
 
 class SearchController:
-    def search(
-        self,
-        query: str,
-        disinterests: List[str],
-        videos: List[Video]
-    ) -> List[Video]:
+    def search(self, query: str, disinterests: List[str]) -> dict:
 
-        disinterest_keywords = [d.lower() for d in disinterests]
+        clean_disinterests = [d.strip() for d in disinterests if d and d.strip()]
 
+        # ── Step 1: Check query similarity against disinterests BEFORE fetching ──
+        if clean_disinterests:
+            query_blocked = embedding_service.block_mask(
+                texts=[query],
+                disinterests=clean_disinterests,
+                threshold=0.5,
+            )[0]
+
+            if query_blocked:
+                logger.info(
+                    f"Query '{query}' blocked — matches disinterests. "
+                    "Skipping YouTube API call."
+                )
+                return {
+                    "videos": [],
+                    "blocked_count": 0,
+                    "blocked_all": True,
+                }
+
+        # ── Step 2: Fetch videos from YouTube ──
+        videos = youtube_service.search(query)
+
+        if not videos:
+            return {
+                "videos": [],
+                "blocked_count": 0,
+                "blocked_all": False,
+            }
+
+        # ── Step 3: If no disinterests, just rank and return ──
+        if not clean_disinterests:
+            ranked_videos = bert_service.rank_videos(videos)
+            return {
+                "videos": ranked_videos,
+                "blocked_count": 0,
+                "blocked_all": False,
+            }
+
+        # ── Step 4: Semantic filtering of individual videos ──
         texts = []
-        keyword_block = []
-
         for v in videos:
             combined_text = (
-                f"{v.title} "
-                f"{v.description} "
-                f"{v.channelTitle}"
-            ).lower()
-
-            texts.append(
-                f"{v.title}. {v.description}. Channel name: {v.channelTitle}."
+                f"Query: {query}. "
+                f"Title: {v.title}. "
+                f"Description: {v.description}. "
+                f"Channel: {v.channelTitle}."
             )
+            texts.append(combined_text)
 
-            # 🔴 HARD keyword guardrail
-            keyword_block.append(
-                any(k in combined_text for k in disinterest_keywords)
-            )
-
-        # 🔹 Semantic blocking
         semantic_block = embedding_service.block_mask(
             texts=texts,
-            disinterests=disinterests,
-            threshold=0.6   # lower, because keyword is primary
+            disinterests=clean_disinterests,
+            threshold=0.6,
         )
 
-        allowed_videos = []
-        for video, kw_blocked, sem_blocked in zip(videos, keyword_block, semantic_block):
-            if not kw_blocked and not sem_blocked:
-                allowed_videos.append(video)
+        allowed_videos = [
+            video for video, blocked in zip(videos, semantic_block) if not blocked
+        ]
 
         ranked_videos = bert_service.rank_videos(allowed_videos)
-        
+
+        blocked_count = len(videos) - len(allowed_videos)
+        logger.info(
+            f"Filtered {blocked_count}/{len(videos)} videos for query '{query}'"
+        )
+
         return {
             "videos": ranked_videos,
-            "blocked_count": len(videos) - len(allowed_videos)
+            "blocked_count": blocked_count,
+            "blocked_all": False,
         }
 
 

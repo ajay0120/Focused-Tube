@@ -7,6 +7,7 @@ class Video(BaseModel):
     description: Optional[str] = ""
     channelTitle: Optional[str] = ""
     thumbnail: Optional[str] = ""
+    publishedAt: Optional[str] = ""
 
 class RankRequest(BaseModel):
     videos: List[Video]
@@ -14,8 +15,8 @@ class RankRequest(BaseModel):
 class SearchRequest(BaseModel):
     query: str
     disinterests: List[str]
-    videos: List[Video]
 
 class SearchResponse(BaseModel):
     videos: List[Video]
     blocked_count: int
+    blocked_all: bool = False

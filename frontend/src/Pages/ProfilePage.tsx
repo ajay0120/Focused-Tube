@@ -58,8 +58,8 @@ const ProfilePage = () => {
         try {
           // Search for the first interest for now
           const query = auth?.user?.interests?.[0] || "programming";
-          const data = await searchVideos(query);
-          setRecommended(data.slice(0, 4));
+          const data = await searchVideos<Video>(query);
+          setRecommended(data.videos.slice(0, 4));
         } catch (error) {
           console.error("Failed to fetch recommendations", error);
         } finally {

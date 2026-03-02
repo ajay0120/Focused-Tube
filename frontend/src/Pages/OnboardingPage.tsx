@@ -11,6 +11,15 @@ const OnboardingPage = () => {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    // If user exists and onboarding already completed, don't show onboarding
+    if (auth?.user) {
+      if (auth.user.onboardingCompleted) {
+        navigate("/profile");
+      }
+    }
+  }, [auth?.user, navigate]);
+
   const handleAddInterest = (e: React.FormEvent) => {
     e.preventDefault();
     if (

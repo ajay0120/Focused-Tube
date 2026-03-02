@@ -105,9 +105,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     try {
       setError(null);
+      // Register user but do NOT set them as authenticated yet.
+      // Verification (OTP) should complete sign-in in `verifyOtp`.
       const data = await apiRegister(name, username, email, password);
-      setUser(data);
-      localStorage.setItem("userInfo", JSON.stringify(data));
     } catch (err: any) {
       setError(err.response?.data?.message || "Registration failed");
       throw err;

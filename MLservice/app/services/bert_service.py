@@ -3,8 +3,6 @@ from app.models.video import Video
 
 class BertService:
     def rank_videos(self, videos: List[Video]) -> List[Video]:
-        # TODO: Implement actual BERT logic here
-        # Mock logic: details with 'tutorial' or 'course' get higher priority
         
         def score(video: Video):
             s = 0
