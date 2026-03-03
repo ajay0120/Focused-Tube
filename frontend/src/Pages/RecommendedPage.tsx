@@ -29,8 +29,8 @@ const RecommendedPage = () => {
                     // Search the first interest for now to be safe, or iterate.
                     // A better approach for a "feed" is complex, let's stick to the primary interest.
                     const q = auth.user.interests[0];
-                    const data = await searchVideos(q);
-                    setVideos(data);
+                    const data = await searchVideos<Video>(q);
+                    setVideos(data.videos);
                 } catch (error) {
                     console.error("Failed to fetch recommendations", error);
                 } finally {

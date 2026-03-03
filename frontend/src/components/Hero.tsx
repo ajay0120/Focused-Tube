@@ -7,8 +7,8 @@ const Hero: React.FC = () => {
     return (
         <div className="relative overflow-hidden bg-black text-white pt-20 pb-24 lg:pt-32 lg:pb-36">
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                <div className="absolute -top-[30%] -right-[10%] w-[70rem] h-[70rem] bg-purple-900/20 rounded-full blur-3xl" />
-                <div className="absolute -bottom-[30%] -left-[10%] w-[70rem] h-[70rem] bg-blue-900/20 rounded-full blur-3xl" />
+                <div className="absolute -top-[30%] -right-[10%] w-[70rem] h-[70rem] bg-purple-900/20 rounded-full blur-3xl animate-float-slow" />
+                <div className="absolute -bottom-[30%] -left-[10%] w-[70rem] h-[70rem] bg-blue-900/20 rounded-full blur-3xl animate-float-medium" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -17,18 +17,18 @@ const Hero: React.FC = () => {
                     <span className="text-sm font-medium text-gray-300">AI-Powered Production System</span>
                 </div>
 
-                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
+                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400 animate-fade-in-up [animation-delay:120ms]">
                     Take Control of <br /> Your Viewing Experience.
                 </h1>
 
-                <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-400 mb-10">
+                <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-400 mb-10 animate-fade-in-up [animation-delay:220ms]">
                     AI-driven filtering and recommendations to prioritize your productivity and digital well-being. Stop the scroll, start the growth.
                 </p>
 
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in-up [animation-delay:320ms]">
                     <button 
                         onClick={() => navigate('/search')}
-                        className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-black bg-white rounded-full hover:bg-gray-200 transition-all transform hover:scale-105"
+                        className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-black bg-white rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 shadow-lg shadow-white/10"
                     >
                         Get Started <ArrowRight className="ml-2 w-5 h-5" />
                     </button>
@@ -36,29 +36,29 @@ const Hero: React.FC = () => {
                         onClick={() => {
                             document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
                         }}
-                        className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-white/10 border border-white/10 rounded-full hover:bg-white/20 transition-all"
+                        className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-white/10 border border-white/10 rounded-full hover:bg-white/20 transition-all backdrop-blur-sm"
                     >
                         Learn More
                     </button>
                 </div>
 
-                <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 py-8 border-t border-white/10 bg-white/5 rounded-2xl backdrop-blur-sm">
-                    <div className="flex flex-col items-center">
-                        <div className="p-3 bg-blue-500/10 rounded-xl mb-3">
+                <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 py-8 border-t border-white/10 bg-white/5 rounded-2xl backdrop-blur-sm animate-fade-in-up [animation-delay:420ms]">
+                    <div className="flex flex-col items-center transition-transform duration-200 hover:-translate-y-1">
+                        <div className="p-3 bg-blue-500/10 rounded-xl mb-3 ring-1 ring-blue-400/20">
                             <Zap className="w-6 h-6 text-blue-400" />
                         </div>
                         <h3 className="text-lg font-semibold">Strict Filtering</h3>
                         <p className="text-gray-400 text-sm">NLP-based distraction removal</p>
                     </div>
-                    <div className="flex flex-col items-center">
-                        <div className="p-3 bg-purple-500/10 rounded-xl mb-3">
+                    <div className="flex flex-col items-center transition-transform duration-200 hover:-translate-y-1">
+                        <div className="p-3 bg-purple-500/10 rounded-xl mb-3 ring-1 ring-purple-400/20">
                             <ShieldCheck className="w-6 h-6 text-purple-400" />
                         </div>
                         <h3 className="text-lg font-semibold">Digital Well-being</h3>
                         <p className="text-gray-400 text-sm">Track & control screen time</p>
                     </div>
-                    <div className="flex flex-col items-center">
-                        <div className="p-3 bg-green-500/10 rounded-xl mb-3">
+                    <div className="flex flex-col items-center transition-transform duration-200 hover:-translate-y-1">
+                        <div className="p-3 bg-green-500/10 rounded-xl mb-3 ring-1 ring-green-400/20">
                             <Zap className="w-6 h-6 text-green-400" />
                         </div>
                         <h3 className="text-lg font-semibold">Hybrid-Rec Engine</h3>

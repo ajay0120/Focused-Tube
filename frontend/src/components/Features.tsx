@@ -44,7 +44,7 @@ const Features: React.FC = () => {
     return (
         <div id="features" className="bg-black py-24 sm:py-32">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                <div className="mx-auto max-w-2xl lg:text-center">
+                <div className="mx-auto max-w-2xl lg:text-center animate-fade-in-up">
                     <h2 className="text-base font-semibold leading-7 text-blue-400">Core Capabilities</h2>
                     <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
                         Designed for Focus. Built for Growth.
@@ -56,7 +56,10 @@ const Features: React.FC = () => {
                 <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
                     <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
                         {features.map((feature) => (
-                            <div key={feature.name} className="flex flex-col items-start">
+                            <div
+                                key={feature.name}
+                                className="flex flex-col items-start rounded-2xl border border-white/10 bg-white/5 p-6 card-hover"
+                            >
                                 <div className={`rounded-lg p-3 ${feature.color} ring-1 ring-white/10 mb-5`}>
                                     <feature.icon className="h-6 w-6" aria-hidden="true" />
                                 </div>
