@@ -1,11 +1,16 @@
 import express from 'express';
-import { authUser, registerUser, getUserProfile, updateUserProfile } from '../controllers/authController';
-import { protect } from '../middleware/authMiddleware';
+import { authUser, registerUser, verifyOtp, resendOtp, googleLogin, forgotPassword, resetPassword } from '../controllers/authController';
+
 
 const router = express.Router();
 
 router.post('/', registerUser);
 router.post('/login', authUser);
-router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
+router.post('/google-login', googleLogin);
+router.post('/verify-otp', verifyOtp);
+router.post('/resend-otp', resendOtp);
+router.route('/forgot-password').post(forgotPassword);
+router.route('/reset-password').post(resetPassword);
+
 
 export default router;

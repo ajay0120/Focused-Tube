@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
+import logger from '../utils/logger';
 
 interface AuthRequest extends Request {
     user?: any;
@@ -18,9 +19,10 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
             const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret');
 
             req.user = await User.findById(decoded.id).select('-password');
+            logger.info(`Authenticated user: ${req.user.email}`);
             next();
         } catch (error) {
-            console.error(error);
+            logger.error(`Token verification failed: ${error}`);
             res.status(401).json({ message: 'Not authorized, token failed' });
         }
     }

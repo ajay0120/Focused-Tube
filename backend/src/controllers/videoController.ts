@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { searchVideos } from '../services/youtubeService';
+import logger from '../utils/logger';
 
 // @desc    Search videos from YouTube
 // @route   GET /api/videos/search
@@ -12,11 +13,15 @@ export const search = async (req: Request, res: Response) => {
              res.status(400).json({ message: 'Query parameter "q" is required' });
              return;
         }
+        
+        logger.info(`Search query received: ${query}`);
 
-        const videos = await searchVideos(query);
-        res.json(videos);
-    } catch (error) {
-        console.error(error);
+        // Pass user context to service for personalized filtering
+        const result = await searchVideos(query, (req as any).user);
+        res.json(result);
+
+    } catch (error: any) {
+        logger.error(`Error in video search: ${error.message}`);
         res.status(500).json({ message: 'Server Error' });
     }
 };
