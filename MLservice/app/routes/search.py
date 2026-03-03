@@ -9,6 +9,7 @@ def search_videos(request: SearchRequest):
     try:
         return search_controller.search(
             query=request.query,
+            interests=request.interests,
             disinterests=request.disinterests,
         )
     except Exception as e:

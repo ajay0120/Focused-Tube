@@ -5,9 +5,11 @@ import RegisterPage from './Pages/RegisterPage';
 import OnboardingPage from './Pages/OnboardingPage';
 import ProfilePage from './Pages/ProfilePage';
 import RecommendedPage from './Pages/RecommendedPage';
+import Dashboard from './Pages/Dashboard';
 import SearchPage from './Pages/SearchPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import Watch from './Pages/Watch';
 
 function App() {
   return (
@@ -41,6 +43,14 @@ function App() {
             } 
         />
         <Route 
+            path="/dashboard" 
+            element={
+                <ProtectedRoute>
+                    <Dashboard />
+                </ProtectedRoute>
+            } 
+        />
+        <Route 
             path="/search" 
             element={
                 <ProtectedRoute>
@@ -48,6 +58,7 @@ function App() {
                 </ProtectedRoute>
             } 
         />
+        <Route path="/watch/:id" element={<Watch />} />
         </Routes>
     </AuthProvider>
   );

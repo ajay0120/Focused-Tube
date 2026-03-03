@@ -29,6 +29,7 @@ export const searchVideos = async (
       {
         query: query,
         disinterests: user?.disinterests || [],
+        interests: user?.interests || [],
       },
     );
 

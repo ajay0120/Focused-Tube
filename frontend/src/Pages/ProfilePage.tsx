@@ -143,6 +143,15 @@ const ProfilePage = () => {
                 )}
               </div>
             </div>
+            <div className="ml-auto">
+              <Link
+                to="/dashboard"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-sm font-semibold transition"
+              >
+                View Analytics
+                <ChevronRight className="inline-block w-4 h-4 ml-1" />
+              </Link>
+            </div>
           </div>
 
           {/* Stats Grid */}
