@@ -33,7 +33,7 @@ const ProfilePage = () => {
   const [isEditingDisinterests, setIsEditingDisinterests] = useState(false);
   const [editDisinterests, setEditDisinterests] = useState<string[]>([]);
   const [newDisinterest, setNewDisinterest] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     if (auth?.refetchUser) {
