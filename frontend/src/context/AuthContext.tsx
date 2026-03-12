@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import {
   login as apiLogin,
@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setError(null);
       // Register user but do NOT set them as authenticated yet.
       // Verification (OTP) should complete sign-in in `verifyOtp`.
-      const data = await apiRegister(name, username, email, password);
+      await apiRegister(name, username, email, password);
     } catch (err: any) {
       setError(err.response?.data?.message || "Registration failed");
       throw err;
@@ -153,8 +153,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const {
         googleLogin: apiGoogleLogin,
-        verifyOtp: apiVerifyOtp,
-        resendOtp: apiResendOtp,
       } = await import("../api/auth");
       const data = await apiGoogleLogin(token);
       setUser(data);
@@ -259,3 +257,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+

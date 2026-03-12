@@ -250,7 +250,7 @@ const RegisterPage = () => {
 
             <div className="text-center text-sm">
               <p className="text-gray-400">
-                {timer > 0 ? (
+                {!canResend ? (
                   <>
                     Resend code in{" "}
                     <span className="text-white font-mono">
@@ -259,15 +259,19 @@ const RegisterPage = () => {
                     </span>
                   </>
                 ) : (
-                  <button
-                    onClick={handleResendOtp}
-                    className="font-medium text-blue-400 hover:text-blue-300 transition-colors"
-                  >
-                    Resend Code
-                  </button>
+                  "You can request a new code now."
                 )}
               </p>
               <button
+                type="button"
+                onClick={handleResendOtp}
+                disabled={!canResend}
+                className={`mt-3 font-medium transition-colors ${canResend ? "text-blue-400 hover:text-blue-300" : "text-gray-500 cursor-not-allowed"}`}
+              >
+                Resend Code
+              </button>
+              <button
+                type="button"
                 onClick={() => setShowOtpModal(false)}
                 className="mt-4 text-xs text-gray-500 hover:text-gray-400"
               >
@@ -310,3 +314,4 @@ const GoogleLoginButton = ({
 };
 
 export default RegisterPage;
+

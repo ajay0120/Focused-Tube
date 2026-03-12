@@ -1,8 +1,7 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {VideoPlayer} from "../components/VideoPlayer";
 
 const Watch = () => {
-  const { id } = useParams();
   const location = useLocation();
   const video = location.state;
 

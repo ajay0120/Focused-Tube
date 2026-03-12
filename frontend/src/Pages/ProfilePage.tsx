@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import {
@@ -12,7 +12,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { searchVideos } from "../api/video";
-import { useNavigate, Link } from "react-router-dom";
+import { getDailyStatistics } from "../api/analytics";
+import { Link } from "react-router-dom";
 
 interface Video {
   id: string;
@@ -27,13 +28,13 @@ const ProfilePage = () => {
   const auth = useContext(AuthContext);
   const [recommended, setRecommended] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
+  const [focusTime, setFocusTime] = useState("0h 0m");
   const [isEditing, setIsEditing] = useState(false);
   const [editInterests, setEditInterests] = useState<string[]>([]);
   const [newInterest, setNewInterest] = useState("");
   const [isEditingDisinterests, setIsEditingDisinterests] = useState(false);
   const [editDisinterests, setEditDisinterests] = useState<string[]>([]);
   const [newDisinterest, setNewDisinterest] = useState("");
-  // const navigate = useNavigate();
 
   useEffect(() => {
     if (auth?.refetchUser) {
@@ -42,6 +43,23 @@ const ProfilePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const fetchDailyStatistics = async () => {
+      try {
+        const daily = await getDailyStatistics();
+        const productiveSeconds = Number(daily?.productiveTime || 0);
+        const hours = Math.floor(productiveSeconds / 3600);
+        const minutes = Math.floor((productiveSeconds % 3600) / 60);
+        setFocusTime(`${hours}h ${minutes}m`);
+      } catch (error) {
+        console.error("Failed to fetch daily statistics", error);
+      }
+    };
+
+    if (auth?.user) {
+      fetchDailyStatistics();
+    }
+  }, [auth?.user]);
   useEffect(() => {
     if (auth?.user?.interests) {
       setEditInterests(auth.user.interests);
@@ -162,7 +180,7 @@ const ProfilePage = () => {
               </div>
               <div>
                 <h3 className="text-gray-400 text-sm">Total Focus Time</h3>
-                <p className="text-2xl font-bold text-white">0h 0m</p>
+                <p className="text-2xl font-bold text-white">{focusTime}</p>
               </div>
             </div>
             <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex items-center gap-4">
@@ -400,3 +418,6 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+
+

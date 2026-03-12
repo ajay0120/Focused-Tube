@@ -38,7 +38,7 @@ export const authUser = async (req: Request, res: Response) => {
       token: generateToken(user._id.toString()),
     });
   } else {
-    logger.warn(`Failed login attempt for email: ${email}`);
+    logger.warn("Failed login attempt", { email });
     res.status(401).json({ message: "Invalid email or password" });
   }
 };
@@ -52,7 +52,7 @@ export const registerUser = async (req: Request, res: Response) => {
   const userExists = await User.findOne({ email });
 
   if (userExists) {
-    logger.warn(`Registration failed: User already exists - ${email}`);
+    logger.warn("Registration failed because user already exists", { email });
     res.status(400).json({ message: "User already exists" });
     return;
   }
@@ -81,13 +81,13 @@ export const registerUser = async (req: Request, res: Response) => {
         subject: "FocusedTube - Verify your email",
         message: `Your verification code is: ${otpCode}. It expires in 2 minutes.`,
       });
-      logger.info(`OTP sent to ${user.email}`);
+      logger.info("Registration OTP sent", { email: user.email });
     } catch (error) {
-      logger.error(`Failed to send OTP to ${user.email}`);
+      logger.error("Failed to send registration OTP", { email: user.email });
       // Consider deleting user or handling safely, but for now just log
     }
 
-    logger.info(`New user registered (unverified): ${user.email}`);
+    logger.info("New user registered", { email: user.email, userId: user._id.toString(), verified: user.isVerified });
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -137,7 +137,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
     user.otp = undefined; // Clear OTP
     await user.save();
 
-    logger.info(`User verified: ${user.email}`);
+    logger.info("User verified", { email: user.email, userId: user._id.toString() });
     res.json({
       message: "User verified successfully",
       token: generateToken(user._id.toString()),
@@ -199,10 +199,10 @@ export const resendOtp = async (req: Request, res: Response) => {
       subject: "FocusedTube - Resend Verification Code",
       message: `Your verification code is: ${otpCode}. It expires in 2 minutes.`,
     });
-    logger.info(`OTP resent to ${user.email}`);
+    logger.info("Verification OTP resent", { email: user.email, userId: user._id.toString() });
     res.json({ message: "OTP sent successfully" });
   } catch (error) {
-    logger.error(`Failed to resend OTP to ${user.email}`);
+    logger.error("Failed to resend verification OTP", { email: user.email, userId: user._id.toString() });
     res.status(500).json({ message: "Failed to send OTP" });
   }
 };
@@ -278,7 +278,7 @@ export const googleLogin = async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    logger.error("Google Login Error:", error);
+    logger.error("Google login failed", { error: error instanceof Error ? error.message : String(error) });
     res.status(400).json({ message: "Google Login Failed" });
   }
 };
@@ -314,10 +314,10 @@ export const forgotPassword = async (req: Request, res: Response) => {
       subject: "FocusedTube - Password Reset Request",
       message: `You requested a password reset. Your verification code is: ${otpCode}. It expires in 10 minutes.`,
     });
-    logger.info(`Password reset OTP sent to ${user.email}`);
+    logger.info("Password reset OTP sent", { email: user.email, userId: user._id.toString() });
     res.json({ message: "OTP sent to your email" });
   } catch (error) {
-    logger.error(`Failed to send password reset OTP to ${user.email}`);
+    logger.error("Failed to send password reset OTP", { email: user.email, userId: user._id.toString() });
     user.otp = undefined;
     await user.save();
     res.status(500).json({ message: "Failed to send OTP" });
@@ -347,9 +347,10 @@ export const resetPassword = async (req: Request, res: Response) => {
     user.otp = undefined; // Clear OTP
     await user.save();
 
-    logger.info(`Password reset successful for: ${user.email}`);
+    logger.info("Password reset successful", { email: user.email, userId: user._id.toString() });
     res.json({ message: "Password reset successful. You can now login." });
   } else {
     res.status(400).json({ message: "Invalid OTP" });
   }
 };
+

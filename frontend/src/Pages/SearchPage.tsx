@@ -270,6 +270,54 @@ const SearchPage = () => {
                             ))}
                         </div>
                     </>
+                ) : recommendedVideos.length > 0 ? (
+                    <>
+                        <div className="text-center mt-12 mb-8">
+                            <h2 className="text-2xl font-bold">Recommended for You</h2>
+                            <p className="text-gray-400 mt-2">
+                                Personalized videos based on your interests.
+                            </p>
+                        </div>
+
+                        {blockedCount > 0 && (
+                            <div className="bg-red-500/10 border border-red-500/20 text-red-200 px-4 py-3 rounded-lg mb-6 flex items-center">
+                                <span className="mr-2">Blocked:</span>
+                                {blockedCount} video{blockedCount !== 1 ? 's' : ''}{' '}
+                                {blockedCount !== 1 ? 'were' : 'was'} hidden because{' '}
+                                {blockedCount !== 1 ? 'they' : 'it'} matched your disinterests.
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {recommendedVideos.map((video) => (
+                                <div
+                                    key={video.id}
+                                    onClick={() =>
+                                        navigate(`/watch/${video.id}`, { state: video })
+                                    }
+                                    className="bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-gray-700 hover:border-blue-500 transition duration-300 group"
+                                >
+                                    <img
+                                        src={video.thumbnail}
+                                        alt={video.title}
+                                        className="w-full h-48 object-cover"
+                                    />
+
+                                    <div className="p-6">
+                                        <h3 className="text-lg font-bold mb-2 line-clamp-2 text-white group-hover:text-blue-400 transition">
+                                            {video.title}
+                                        </h3>
+                                        <p className="text-sm text-gray-400 mb-4">
+                                            {video.channelTitle}
+                                        </p>
+                                        <p className="text-sm text-gray-500 line-clamp-3">
+                                            {video.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 ) : (
                     <div className="flex flex-col items-center justify-center mt-12 text-center animate-in fade-in zoom-in duration-300">
                         <div className="bg-red-500/10 p-6 rounded-full mb-6 ring-1 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
@@ -303,3 +351,4 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
+
