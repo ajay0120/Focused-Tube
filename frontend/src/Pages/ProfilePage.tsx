@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import {
@@ -12,7 +12,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { searchVideos } from "../api/video";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface Video {
   id: string;
@@ -33,7 +33,6 @@ const ProfilePage = () => {
   const [isEditingDisinterests, setIsEditingDisinterests] = useState(false);
   const [editDisinterests, setEditDisinterests] = useState<string[]>([]);
   const [newDisinterest, setNewDisinterest] = useState("");
-  // const navigate = useNavigate();
 
   useEffect(() => {
     if (auth?.refetchUser) {
@@ -400,3 +399,4 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+

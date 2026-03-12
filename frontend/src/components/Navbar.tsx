@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -57,3 +57,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
