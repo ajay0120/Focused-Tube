@@ -2,6 +2,10 @@ import axios from "axios";
 import logger from "../utils/logger";
 import User from "../models/User";
 
+const mlServiceBaseUrl = (
+  process.env.ML_SERVICE_URL || "http://localhost:8000"
+).replace(/\/+$/, "");
+
 interface Video {
   id: string;
   title: string;
@@ -23,15 +27,12 @@ export const searchVideos = async (
 ): Promise<SearchResult> => {
   try {
     // Forward query + disinterests to ML service
-    // ML service handles: disinterest check → YouTube fetch → filter → rank
-    const mlResponse = await axios.post(
-      "http://localhost:8000/api/videos/search",
-      {
-        query: query,
-        disinterests: user?.disinterests || [],
-        interests: user?.interests || [],
-      },
-    );
+    // ML service handles: disinterest check -> YouTube fetch -> filter -> rank
+    const mlResponse = await axios.post(`${mlServiceBaseUrl}/api/videos/search`, {
+      query: query,
+      disinterests: user?.disinterests || [],
+      interests: user?.interests || [],
+    });
 
     const data = mlResponse.data;
 
