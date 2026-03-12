@@ -18,15 +18,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Request logging middleware
 app.use((req, res, next) => {
-    logger.http(`${req.method} ${req.url}`);
-    next();
+  const startedAt = Date.now();
+
+  res.on('finish', () => {
+    logger.http('%s %s %d %dms', req.method, req.originalUrl, res.statusCode, Date.now() - startedAt);
+  });
+
+  next();
 });
 
-app.get('/', (req, res) => {
-    logger.info('API is running...');
-    res.send('API is running...');
+app.get('/', (_req, res) => {
+  logger.info('Health check requested');
+  res.send('API is running...');
 });
 
 app.use('/api/auth', authRoutes);
@@ -34,12 +38,11 @@ app.use('/api/videos', videoRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
-// Error Handling middlewares
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`);
+  logger.info('Server running on port %s', PORT);
 });
