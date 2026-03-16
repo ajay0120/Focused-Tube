@@ -1,4 +1,9 @@
 fastapi
 uvicorn
 sentence-transformers
+torch
+numpy
+scikit-learn
+pydantic
+requests
 python-dotenv
