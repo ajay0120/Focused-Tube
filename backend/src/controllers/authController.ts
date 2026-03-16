@@ -47,6 +47,7 @@ export const authUser = async (req: Request, res: Response) => {
 // @route   POST /api/users
 // @access  Public
 export const registerUser = async (req: Request, res: Response) => {
+  logger.info("Registration attempt", { email: req.body.email });
   const { name, username, email, password } = req.body;
 
   const userExists = await User.findOne({ email });
@@ -76,6 +77,7 @@ export const registerUser = async (req: Request, res: Response) => {
   if (user) {
     // Send OTP Email
     try {
+      logger.info("Sending registration OTP", { email: user.email });
       await sendEmail({
         email: user.email,
         subject: "FocusedTube - Verify your email",
