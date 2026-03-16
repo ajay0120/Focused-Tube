@@ -1,7 +1,5 @@
-import { Resend } from "resend";
-import logger from "./logger";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from 'nodemailer';
+import logger from './logger';
 
 interface EmailOptions {
   email: string;
@@ -12,20 +10,44 @@ interface EmailOptions {
 
 const sendEmail = async (options: EmailOptions) => {
   try {
-    const { data, error } = await resend.emails.send({
-      from: "FocusedTube <onboarding@resend.dev>",
-      to: options.email,
-      subject: options.subject,
-      html: options.html || `<p>${options.message}</p>`
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // TLS via STARTTLS
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS, // MUST be Gmail App Password (not normal password)
+      },
+      connectionTimeout: 10000,
     });
 
-    if (error) throw error;
+    // Verify SMTP connection
+    await transporter.verify();
+    logger.info('SMTP server is ready');
 
-    logger.info("Email sent", data);
+    const mailOptions = {
+      from: `${process.env.FROM_NAME || 'FocusedTube'} <${process.env.EMAIL_USER}>`,
+      to: options.email,
+      subject: options.subject,
+      text: options.message,
+      html: options.html,
+    };
 
+    const info = await transporter.sendMail(mailOptions);
+
+    logger.info('Email sent successfully', {
+      to: options.email,
+      messageId: info.messageId,
+    });
   } catch (error: any) {
-    logger.error("Email failed", error);
-    throw new Error("Email could not be sent");
+    logger.error('Error sending email', {
+      email: options.email,
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+    });
+
+    throw new Error('Email could not be sent');
   }
 };
 
