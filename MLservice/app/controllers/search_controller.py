@@ -52,7 +52,11 @@ class SearchController:
         
         # ── Step 3: If no disinterests, just rank and return ──
         if not clean_disinterests:
-            ranked_videos = bert_service.rank_videos(videos)
+            ranked_videos = bert_service.rank_videos(
+                videos=videos,
+                interests=clean_interests,
+                disinterests=[],
+            )
             return {
                 "videos": ranked_videos,
                 "blocked_count": 0,
