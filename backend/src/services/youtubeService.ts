@@ -26,11 +26,13 @@ export const searchVideos = async (
   user?: any,
 ): Promise<SearchResult> => {
   try {
+    const isRelaxMode = user?.mode === "relax";
+
     // Forward query + disinterests to ML service
     // ML service handles: disinterest check -> YouTube fetch -> filter -> rank
     const mlResponse = await axios.post(`${mlServiceBaseUrl}/api/videos/search`, {
       query: query,
-      disinterests: user?.disinterests || [],
+      disinterests: isRelaxMode ? [] : user?.disinterests || [],
       interests: user?.interests || [],
     });
 
@@ -45,7 +47,7 @@ export const searchVideos = async (
       );
 
       // Update user blocked count if any videos were blocked
-      if (user && blockedCount > 0) {
+      if (user && blockedCount > 0 && !isRelaxMode) {
         await User.findByIdAndUpdate(user._id, {
           $inc: { distractionsBlocked: blockedCount },
         });

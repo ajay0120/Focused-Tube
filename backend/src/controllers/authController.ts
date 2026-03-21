@@ -31,10 +31,12 @@ export const authUser = async (req: Request, res: Response) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      mode: user.mode,
       interests: user.interests,
       disinterests: user.disinterests,
       age: user.age,
       onboardingCompleted: user.onboardingCompleted,
+      distractionsBlocked: user.distractionsBlocked,
       token: generateToken(user._id.toString()),
     });
   } else {
@@ -94,6 +96,7 @@ export const registerUser = async (req: Request, res: Response) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      mode: user.mode,
       isVerified: user.isVerified,
       // Don't send token yet if you want stricty verify first.
       // But usually we can send token but restrict access.
@@ -146,6 +149,12 @@ export const verifyOtp = async (req: Request, res: Response) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      mode: user.mode,
+      interests: user.interests,
+      disinterests: user.disinterests,
+      age: user.age,
+      onboardingCompleted: user.onboardingCompleted,
+      distractionsBlocked: user.distractionsBlocked,
     });
   } else {
     res.status(400).json({ message: "Invalid OTP" });
@@ -245,6 +254,11 @@ export const googleLogin = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        mode: user.mode,
+        interests: user.interests,
+        disinterests: user.disinterests,
+        age: user.age,
+        distractionsBlocked: user.distractionsBlocked,
         isVerified: true,
         onboardingCompleted: user.onboardingCompleted,
         isNewUser: false,
@@ -271,6 +285,11 @@ export const googleLogin = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        mode: user.mode,
+        interests: user.interests,
+        disinterests: user.disinterests,
+        age: user.age,
+        distractionsBlocked: user.distractionsBlocked,
         isVerified: true,
         onboardingCompleted: false,
         isNewUser: true,

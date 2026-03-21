@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import UserActivity from "../models/UserActivity";
 import UserDailyMetrics from "../models/UserDailyMetrics";
+import User from "../models/User";
 import logger from "../utils/logger";
 
 declare global {
@@ -205,29 +206,42 @@ export const logActivity = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "User not authenticated" });
     }
 
-    const { videoId, category, watchTime, isBlockedTopic, wasOverride } = req.body;
+    const { videoId, category, watchTime, isBlockedTopic, wasOverride, mode } = req.body;
+    const effectiveMode = mode === "relax" ? "relax" : "study";
+    const effectiveIsBlockedTopic = Boolean(isBlockedTopic) || effectiveMode === "relax";
+    const effectiveWasOverride = Boolean(wasOverride) || effectiveMode === "relax";
+
     logger.info("Activity logging requested", {
       userId: req.user.id,
       videoId,
       category,
+      mode: effectiveMode,
       watchTime,
-      isBlockedTopic,
-      wasOverride,
+      isBlockedTopic: effectiveIsBlockedTopic,
+      wasOverride: effectiveWasOverride,
     });
 
     await UserActivity.create({
       userId: req.user.id,
       videoId,
       category,
+      mode: effectiveMode,
       watchTime,
-      isBlockedTopic,
-      wasOverride,
+      isBlockedTopic: effectiveIsBlockedTopic,
+      wasOverride: effectiveWasOverride,
       timestamp: new Date(),
     });
+
+    if (effectiveWasOverride) {
+      await User.findByIdAndUpdate(req.user.id, {
+        $inc: { distractionsBlocked: 1 },
+      });
+    }
 
     logger.info("Activity logged successfully", {
       userId: req.user.id,
       videoId,
+      mode: effectiveMode,
       watchTime,
     });
     return res.json({ success: true });

@@ -7,6 +7,7 @@ export interface IUser extends Document {
     email: string;
     password: string;
     role: "user" | "admin";
+    mode: "study" | "relax";
     interests: string[];
     disinterests: string[];
     age?: number;
@@ -45,6 +46,11 @@ const userSchema = new Schema<IUser>(
             type: String,
             enum: ["user", "admin"],
             default: "user",
+        },
+        mode: {
+            type: String,
+            enum: ["study", "relax"],
+            default: "study",
         },
         interests: {
             type: [String],

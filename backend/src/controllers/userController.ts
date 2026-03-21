@@ -17,6 +17,7 @@ export const getUserProfile = async (req: any, res: Response) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      mode: user.mode,
       interests: user.interests,
       disinterests: user.disinterests,
       age: user.age,
@@ -42,6 +43,9 @@ export const updateUserProfile = async (req: any, res: Response) => {
     if (req.body.password) {
       user.password = req.body.password;
     }
+    if (req.body.mode !== undefined) {
+      user.mode = req.body.mode;
+    }
     user.interests = req.body.interests || user.interests;
     user.disinterests = req.body.disinterests || user.disinterests;
     user.age = req.body.age || user.age;
@@ -62,10 +66,12 @@ export const updateUserProfile = async (req: any, res: Response) => {
       username: updatedUser.username,
       email: updatedUser.email,
       role: updatedUser.role,
+      mode: updatedUser.mode,
       interests: updatedUser.interests,
       disinterests: updatedUser.disinterests,
       age: updatedUser.age,
       onboardingCompleted: updatedUser.onboardingCompleted,
+      distractionsBlocked: updatedUser.distractionsBlocked,
       token: generateToken(updatedUser._id.toString()),
     });
   } else {

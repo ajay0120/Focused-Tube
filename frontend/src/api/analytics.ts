@@ -18,6 +18,7 @@ export const logActivity = async (activityData: {
     watchTime: number;
     isBlockedTopic: boolean;
     wasOverride: boolean;
+    mode?: "study" | "relax";
 }) => {
     const response = await api.post(`${API_URL}/log`, activityData);
     return response.data;
