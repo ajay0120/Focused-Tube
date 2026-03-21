@@ -242,7 +242,7 @@ const ProfilePage = () => {
                   <Clock className="h-8 w-8 text-emerald-300" />
                 </div>
                 <div>
-                  <h3 className="text-sm text-slate-400">Focus Momentum</h3>
+                  <h3 className="text-sm text-slate-400">Focus Time</h3>
                   <p className="text-2xl font-bold text-white">{focusTime}</p>
                 </div>
               </div>
@@ -253,7 +253,7 @@ const ProfilePage = () => {
                   <Shield className="h-8 w-8 text-cyan-300" />
                 </div>
                 <div>
-                  <h3 className="text-sm text-slate-400">Protection Active</h3>
+                  <h3 className="text-sm text-slate-400">Distractions Blocked</h3>
                   <p className="text-2xl font-bold text-white">
                     {auth?.user?.distractionsBlocked || 0}
                   </p>

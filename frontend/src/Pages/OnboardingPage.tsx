@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Plus, Sparkles, ShieldBan, Wand2 } from "lucide-react";
+import { ArrowRight, Plus, Sparkles, ShieldBan} from "lucide-react";
 
 const OnboardingPage = () => {
   const [interests, setInterests] = useState<string[]>([]);
@@ -128,7 +128,6 @@ const OnboardingPage = () => {
           <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-4">
             <div className="flex items-start gap-3">
               <div className="rounded-xl bg-cyan-400/15 p-2 text-cyan-200">
-                {/* <Wand2 className="h-5 w-5" /> */}
               </div>
               <div className="space-y-3">
                 <p className="text-sm font-medium text-white">
