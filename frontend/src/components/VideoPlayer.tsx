@@ -8,6 +8,7 @@ export interface WatchVideo {
   category?: string;
   isBlocked?: boolean;
   wasOverride?: boolean;
+  mode?: "study" | "relax";
 }
 
 export interface VideoPlayerHandle {
@@ -50,6 +51,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, { video: WatchVideo }>(
         watchTime: watchTimeRef.current,
         isBlockedTopic: video.isBlocked || false,
         wasOverride: video.wasOverride || false,
+        mode: video.mode || "study",
       });
       watchTimeRef.current = 0;
     } catch (error) {
