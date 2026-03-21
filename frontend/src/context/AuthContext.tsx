@@ -15,6 +15,7 @@ interface User {
   username: string;
   email: string;
   role: string;
+  mode: "study" | "relax";
   token: string;
   onboardingCompleted: boolean;
   interests?: string[];
@@ -63,7 +64,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const data = await apiGetUserProfile();
       const currentInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
-      const updatedUserData = { ...data, token: currentInfo.token };
+      const updatedUserData = {
+        ...data,
+        mode: data.mode || "study",
+        token: currentInfo.token,
+      };
       setUser(updatedUserData);
       localStorage.setItem("userInfo", JSON.stringify(updatedUserData));
     } catch (err) {
@@ -84,9 +89,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       const data = await apiLogin(email, password);
-      setUser(data);
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      if (data.onboardingCompleted) {
+      const normalizedUser = { ...data, mode: data.mode || "study" };
+      setUser(normalizedUser);
+      localStorage.setItem("userInfo", JSON.stringify(normalizedUser));
+      if (normalizedUser.onboardingCompleted) {
         navigate("/profile"); // Redirect to recommended on success
       } else {
         navigate("/onboarding");
@@ -123,8 +129,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const updateProfile = async (userData: any) => {
     try {
       const updatedUser = await apiUpdateProfile(userData);
-      setUser(updatedUser);
-      localStorage.setItem("userInfo", JSON.stringify(updatedUser));
+      const normalizedUser = { ...updatedUser, mode: updatedUser.mode || "study" };
+      setUser(normalizedUser);
+      localStorage.setItem("userInfo", JSON.stringify(normalizedUser));
     } catch (err: any) {
       setError(err.response?.data?.message || "Update failed");
       throw err;
@@ -155,10 +162,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         googleLogin: apiGoogleLogin,
       } = await import("../api/auth");
       const data = await apiGoogleLogin(token);
-      setUser(data);
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      const normalizedUser = { ...data, mode: data.mode || "study" };
+      setUser(normalizedUser);
+      localStorage.setItem("userInfo", JSON.stringify(normalizedUser));
 
-      if (data.isNewUser) {
+      if (normalizedUser.isNewUser) {
         navigate("/onboarding");
       } else {
         navigate("/profile");
@@ -176,8 +184,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { verifyOtp: apiVerifyOtp } = await import("../api/auth");
       const data = await apiVerifyOtp(email, otp);
-      setUser(data);
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      const normalizedUser = { ...data, mode: data.mode || "study" };
+      setUser(normalizedUser);
+      localStorage.setItem("userInfo", JSON.stringify(normalizedUser));
       navigate("/onboarding");
     } catch (err: any) {
       setError(err.response?.data?.message || "Verification failed");
