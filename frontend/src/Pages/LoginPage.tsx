@@ -59,15 +59,15 @@ const LoginPage = () => {
     <div className="relative min-h-screen overflow-hidden bg-[#07111f] text-white">
       <Navbar />
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-[-6rem] top-10 h-64 w-64 rounded-full bg-cyan-500/15 blur-3xl animate-float-slow" />
-        <div className="absolute right-[-4rem] top-28 h-72 w-72 rounded-full bg-blue-500/15 blur-3xl animate-float-medium" />
-        <div className="absolute bottom-[-8rem] left-1/3 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl" />
+        <div className="absolute left-[-6rem] top-10 h-64 w-64 rounded-full bg-fuchsia-500/15 blur-3xl animate-float-slow" />
+        <div className="absolute right-[-4rem] top-28 h-72 w-72 rounded-full bg-purple-500/15 blur-3xl animate-float-medium" />
+        <div className="absolute bottom-[-8rem] left-1/3 h-80 w-80 rounded-full bg-violet-500/12 blur-3xl" />
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-6xl items-center px-4 pb-10 pt-24 sm:px-6 lg:px-8">
         <div className="grid w-full gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div className="hidden lg:block animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-cyan-200">
+            <div className="inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-purple-200">
               <Sparkles className="h-3.5 w-3.5" />
               Stay Focused
             </div>
@@ -95,9 +95,9 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <div className="animate-fade-in-up rounded-[30px] border border-white/10 bg-slate-900/85 p-6 shadow-2xl shadow-black/30 backdrop-blur sm:p-8">
+          <div className="animate-fade-in-up rounded-[30px] border border-white/10 bg-slate-900/85 p-6 shadow-2xl shadow-purple-950/20 backdrop-blur sm:p-8">
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-blue-500/25">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500 via-purple-500 to-violet-600 shadow-lg shadow-purple-500/25">
                 {view === "login" ? (
                   <Lock className="h-6 w-6 text-white" />
                 ) : view === "forgot-email" ? (
@@ -123,7 +123,7 @@ const LoginPage = () => {
             </div>
 
             {message && (
-              <div className="mt-6 rounded-2xl border border-blue-400/20 bg-blue-500/10 p-3 text-center text-sm text-blue-100 animate-fade-in">
+              <div className="mt-6 animate-fade-in rounded-2xl border border-purple-400/20 bg-purple-500/10 p-3 text-center text-sm text-purple-100">
                 {message}
               </div>
             )}
@@ -146,7 +146,7 @@ const LoginPage = () => {
                       name="email"
                       type="email"
                       required
-                      className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
+                      className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
                       placeholder="name@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -161,7 +161,7 @@ const LoginPage = () => {
                       name="password"
                       type="password"
                       required
-                      className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
+                      className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -173,7 +173,7 @@ const LoginPage = () => {
                           setView("forgot-email");
                           setMessage(null);
                         }}
-                        className="text-sm text-cyan-300 transition hover:text-cyan-200"
+                        className="text-sm text-purple-300 transition hover:text-purple-200"
                       >
                         Forgot Password?
                       </button>
@@ -183,7 +183,7 @@ const LoginPage = () => {
 
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/25"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/25"
                 >
                   Sign in
                   <ArrowRight className="h-4 w-4" />
@@ -202,7 +202,7 @@ const LoginPage = () => {
                     name="reset-email"
                     type="email"
                     required
-                    className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
+                    className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -212,7 +212,7 @@ const LoginPage = () => {
                 <div className="space-y-3">
                   <button
                     type="submit"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/25"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/25"
                   >
                     Send Reset Code
                     <ArrowRight className="h-4 w-4" />
@@ -243,7 +243,7 @@ const LoginPage = () => {
                       name="otp"
                       type="text"
                       required
-                      className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
+                      className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
                       placeholder="Enter OTP Code"
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
@@ -258,7 +258,7 @@ const LoginPage = () => {
                       name="new-password"
                       type="password"
                       required
-                      className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
+                      className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
                       placeholder="New Password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
@@ -269,7 +269,7 @@ const LoginPage = () => {
                 <div className="space-y-3">
                   <button
                     type="submit"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/25"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/25"
                   >
                     Reset Password
                     <ArrowRight className="h-4 w-4" />
@@ -309,7 +309,7 @@ const LoginPage = () => {
                   Don&apos;t have an account?{" "}
                   <Link
                     to="/register"
-                    className="font-medium text-cyan-300 transition hover:text-cyan-200"
+                    className="font-medium text-purple-300 transition hover:text-purple-200"
                   >
                     Sign up
                   </Link>

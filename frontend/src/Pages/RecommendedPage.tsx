@@ -47,8 +47,8 @@ const RecommendedPage = () => {
 
       <main className="container relative mx-auto mt-16 px-4 py-8">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute right-[-6rem] top-0 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl animate-float-medium" />
-          <div className="absolute left-[-4rem] top-24 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl animate-float-slow" />
+          <div className="absolute right-[-6rem] top-0 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-3xl animate-float-medium" />
+          <div className="absolute left-[-4rem] top-24 h-72 w-72 rounded-full bg-purple-500/10 blur-3xl animate-float-slow" />
         </div>
 
         <div className="relative mb-8 rounded-[32px] border border-white/10 bg-slate-900/80 px-5 py-8 shadow-2xl shadow-black/20 backdrop-blur sm:px-8">
@@ -61,7 +61,7 @@ const RecommendedPage = () => {
           </button>
 
           <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-cyan-200">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-purple-200">
               <Sparkles className="h-3.5 w-3.5" />
               Personalized Feed
             </div>
@@ -77,14 +77,14 @@ const RecommendedPage = () => {
 
         {loading ? (
           <div className="flex justify-center p-20">
-            <Loader className="h-12 w-12 animate-spin text-cyan-400" />
+            <Loader className="h-12 w-12 animate-spin text-purple-400" />
           </div>
         ) : videos.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {videos.map((video) => (
               <div
                 key={video.id}
-                className="group overflow-hidden rounded-[24px] border border-white/10 bg-slate-900/80 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-cyan-500/10"
+                className="group overflow-hidden rounded-[24px] border border-white/10 bg-slate-900/80 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-purple-400/40 hover:shadow-purple-500/10"
               >
                 <a
                   href={`https://www.youtube.com/watch?v=${video.id}`}
@@ -104,7 +104,7 @@ const RecommendedPage = () => {
                   </div>
                 </a>
                 <div className="p-5">
-                  <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white group-hover:text-cyan-300">
+                  <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white group-hover:text-purple-300">
                     {video.title}
                   </h3>
                   <div className="flex items-center justify-between text-sm text-slate-400">
@@ -126,7 +126,7 @@ const RecommendedPage = () => {
             </p>
             <button
               onClick={() => navigate("/profile")}
-              className="mt-6 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-2 font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/20"
+              className="mt-6 rounded-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 px-6 py-2 font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20"
             >
               Manage Interests
             </button>

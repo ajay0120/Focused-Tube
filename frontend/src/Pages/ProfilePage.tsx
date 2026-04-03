@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import {
   User,
@@ -42,6 +43,7 @@ const ProfilePage = () => {
     number | null
   >(null);
   const [newDisinterest, setNewDisinterest] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (auth?.refetchUser) {
@@ -145,28 +147,55 @@ const ProfilePage = () => {
     }
   };
 
+  const VideoCard = ({
+  video,
+  onClick,
+}: {
+  video: Video;
+  onClick: () => void;
+}) => (
+  <div
+    onClick={onClick}
+    className="mx-auto w-full max-w-xs group cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-slate-900/80 shadow-md transition duration-300 hover:-translate-y-1 hover:border-purple-400/40 hover:shadow-purple-500/10"
+  >
+    <img
+      src={video.thumbnail}
+      alt={video.title}
+      className="h-24 w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+    />
+
+    <div className="p-3">
+      <h3 className="mb-1 line-clamp-2 text-sm font-semibold text-white transition group-hover:text-purple-300">
+        {video.title}
+      </h3>
+      <p className="mb-1 text-xs text-slate-400">{video.channelTitle}</p>
+      <p className="line-clamp-2 text-xs text-slate-500">{video.description}</p>
+    </div>
+  </div>
+);
+
   return (
     <div className="min-h-screen bg-[#07111f] text-white">
       <Navbar />
 
       <main className="container relative mx-auto mt-16 px-4 py-8">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute left-[-8rem] top-0 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl animate-float-slow" />
-          <div className="absolute right-[-6rem] top-24 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl animate-float-medium" />
-          <div className="absolute bottom-[-8rem] left-1/3 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
+          <div className="absolute left-[-8rem] top-0 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-3xl animate-float-slow" />
+          <div className="absolute right-[-6rem] top-24 h-72 w-72 rounded-full bg-purple-500/10 blur-3xl animate-float-medium" />
+          <div className="absolute bottom-[-8rem] left-1/3 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl" />
         </div>
 
         <div className="relative mx-auto max-w-5xl">
           {/* Header Section */}
           <div className="mb-8 rounded-[32px] border border-white/10 bg-slate-900/80 p-6 shadow-2xl shadow-black/20 backdrop-blur sm:p-8">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-cyan-200">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-purple-200">
               <Sparkles className="h-3.5 w-3.5" />
               Profile Hub
             </div>
 
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
               <div className="flex items-center gap-5">
-                <div className="flex h-24 w-24 items-center justify-center rounded-[28px] bg-gradient-to-tr from-cyan-500 to-indigo-600 text-4xl font-bold shadow-lg shadow-blue-500/25">
+                <div className="flex h-24 w-24 items-center justify-center rounded-[28px] bg-gradient-to-tr from-fuchsia-500 via-purple-500 to-violet-600 text-4xl font-bold shadow-lg shadow-purple-500/25">
                   {auth?.user?.name ? (
                     auth.user.name.charAt(0).toUpperCase()
                   ) : (
@@ -201,11 +230,11 @@ const ProfilePage = () => {
               </div>
 
               <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:ml-auto lg:max-w-lg">
-                <div className="rounded-3xl border border-cyan-400/15 bg-cyan-500/10 p-4">
+                <div className="rounded-3xl border border-purple-400/15 bg-purple-500/10 p-4">
                   <p className="text-sm text-slate-300">Total Focus Time</p>
                   <p className="mt-2 text-2xl font-bold text-white">{focusTime}</p>
                 </div>
-                <div className="rounded-3xl border border-blue-400/15 bg-blue-500/10 p-4">
+                <div className="rounded-3xl border border-violet-400/15 bg-violet-500/10 p-4">
                   <p className="text-sm text-slate-300">Distractions Blocked</p>
                   <p className="mt-2 text-2xl font-bold text-white">
                     {auth?.user?.distractionsBlocked || 0}
@@ -226,7 +255,7 @@ const ProfilePage = () => {
               </div>
               <Link
                 to="/dashboard"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/20"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20"
               >
                 View Analytics
                 <ChevronRight className="h-4 w-4" />
@@ -247,10 +276,10 @@ const ProfilePage = () => {
                 </div>
               </div>
             </div>
-            <div className="rounded-[28px] border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-black/15 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-400/20">
+            <div className="rounded-[28px] border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-black/15 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-purple-400/20">
               <div className="flex items-center gap-4">
-                <div className="rounded-2xl bg-cyan-500/10 p-3">
-                  <Shield className="h-8 w-8 text-cyan-300" />
+                <div className="rounded-2xl bg-purple-500/10 p-3">
+                  <Shield className="h-8 w-8 text-purple-300" />
                 </div>
                 <div>
                   <h3 className="text-sm text-slate-400">Distractions Blocked</h3>
@@ -275,7 +304,7 @@ const ProfilePage = () => {
                 onClick={() => setIsEditing(true)}
                 className="rounded-full border border-white/10 bg-white/5 p-2 transition hover:bg-white/10"
               >
-                <Edit2 className="w-4 h-4 text-cyan-300" />
+                <Edit2 className="w-4 h-4 text-purple-300" />
               </button>
             </div>
 
@@ -283,7 +312,7 @@ const ProfilePage = () => {
               {auth?.user?.interests?.map((interest: string, i: number) => (
                 <span
                   key={i}
-                  className="rounded-full border border-cyan-400/15 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-100"
+                  className="rounded-full border border-purple-400/15 bg-purple-500/10 px-4 py-2 text-sm text-purple-100"
                 >
                   {interest}
                 </span>
@@ -337,43 +366,48 @@ const ProfilePage = () => {
               </div>
               <Link
                 to="/recommended"
-                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-cyan-300 transition hover:bg-white/10 hover:text-cyan-200"
+                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-purple-300 transition hover:bg-white/10 hover:text-purple-200"
               >
                 View All <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
             {loading ? (
               <div className="flex justify-center p-8">
-                <Loader className="h-8 w-8 animate-spin text-cyan-400" />
+                <Loader className="h-8 w-8 animate-spin text-purple-400" />
               </div>
             ) : recommended.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {recommended.map((video) => (
-                  <div
+                  // <div
+                  //   key={video.id}
+                  //   className="group overflow-hidden rounded-[24px] border border-white/10 bg-slate-950/70 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:shadow-cyan-500/10"
+                  // >
+                  //   <a
+                  //     href={`https://www.youtube.com/watch?v=${video.id}`}
+                  //     target="_blank"
+                  //     rel="noopener noreferrer"
+                  //     className="flex"
+                  //   >
+                  //     <img
+                  //       src={video.thumbnail}
+                  //       alt={video.title}
+                  //       className="h-24 w-32 object-cover transition duration-500 group-hover:scale-[1.04]"
+                  //     />
+                  //     <div className="p-3">
+                  //       <h3 className="line-clamp-2 text-sm font-bold text-white transition group-hover:text-cyan-300">
+                  //         {video.title}
+                  //       </h3>
+                  //       <p className="mt-1 text-xs text-slate-400">
+                  //         {video.channelTitle}
+                  //       </p>
+                  //     </div>
+                  //   </a>
+                  // </div>
+                  <VideoCard
                     key={video.id}
-                    className="group overflow-hidden rounded-[24px] border border-white/10 bg-slate-950/70 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:shadow-cyan-500/10"
-                  >
-                    <a
-                      href={`https://www.youtube.com/watch?v=${video.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex"
-                    >
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="h-24 w-32 object-cover transition duration-500 group-hover:scale-[1.04]"
-                      />
-                      <div className="p-3">
-                        <h3 className="line-clamp-2 text-sm font-bold text-white transition group-hover:text-cyan-300">
-                          {video.title}
-                        </h3>
-                        <p className="mt-1 text-xs text-slate-400">
-                          {video.channelTitle}
-                        </p>
-                      </div>
-                    </a>
-                  </div>
+                    video={video}
+                    onClick={() => navigate(`/watch/${video.id}`, { state: video })}
+                  />
                 ))}
               </div>
             ) : (
@@ -397,8 +431,8 @@ const ProfilePage = () => {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="mb-4 rounded-2xl border border-cyan-400/15 bg-cyan-500/10 px-4 py-3">
-                <p className="text-sm text-cyan-100">
+              <div className="mb-4 rounded-2xl border border-purple-400/15 bg-purple-500/10 px-4 py-3">
+                <p className="text-sm text-purple-100">
                   Add topics to show more related videos in your feed.
                 </p>
               </div>
@@ -412,11 +446,11 @@ const ProfilePage = () => {
                   onChange={(e) => setNewInterest(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && handleAddInterest()}
                   placeholder="Type an interest"
-                  className="flex-1 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20"
+                  className="flex-1 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
                 />
                 <button
                   onClick={handleAddInterest}
-                  className="whitespace-nowrap rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-3 font-medium text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/20"
+                  className="whitespace-nowrap rounded-2xl bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 px-4 py-3 font-medium text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20"
                 >
                   Add Interest
                 </button>
@@ -427,8 +461,8 @@ const ProfilePage = () => {
                     key={i}
                     className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm transition-all duration-300 ${
                       highlightedInterest === i
-                        ? "scale-105 bg-cyan-500 text-white ring-2 ring-cyan-300 shadow-lg shadow-cyan-500/30"
-                        : "border border-cyan-400/15 bg-cyan-500/10 text-cyan-100"
+                        ? "scale-105 bg-purple-500 text-white ring-2 ring-purple-300 shadow-lg shadow-purple-500/30"
+                        : "border border-purple-400/15 bg-purple-500/10 text-purple-100"
                     }`}
                   >
                     {interest}
@@ -443,7 +477,7 @@ const ProfilePage = () => {
               </div>
               <button
                 onClick={handleSaveInterests}
-                className="w-full rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 py-3 font-bold text-white transition hover:scale-[1.01] hover:shadow-lg hover:shadow-blue-500/20"
+                className="w-full rounded-2xl bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 py-3 font-bold text-white transition hover:scale-[1.01] hover:shadow-lg hover:shadow-purple-500/20"
               >
                 Save Changes
               </button>

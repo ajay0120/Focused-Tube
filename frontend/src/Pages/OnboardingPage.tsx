@@ -82,8 +82,8 @@ const OnboardingPage = () => {
   return (
     <div className="min-h-screen overflow-hidden bg-[#07111f] px-4 py-8 text-white sm:px-6 lg:px-8">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-[-8rem] top-[-6rem] h-64 w-64 rounded-full bg-cyan-500/15 blur-3xl" />
-        <div className="absolute right-[-6rem] top-20 h-72 w-72 rounded-full bg-blue-500/15 blur-3xl" />
+        <div className="absolute left-[-8rem] top-[-6rem] h-64 w-64 rounded-full bg-fuchsia-500/15 blur-3xl" />
+        <div className="absolute right-[-6rem] top-20 h-72 w-72 rounded-full bg-purple-500/15 blur-3xl" />
         <div className="absolute bottom-[-8rem] left-1/3 h-80 w-80 rounded-full bg-red-500/10 blur-3xl" />
       </div>
 
@@ -91,7 +91,7 @@ const OnboardingPage = () => {
         <div className="rounded-[28px] border border-white/10 bg-slate-900/85 p-6 shadow-2xl shadow-black/30 backdrop-blur sm:p-8">
           <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-cyan-200">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-purple-200">
                 Feed Setup
               </div>
               <h2 className="text-4xl font-black tracking-tight text-white">
@@ -104,11 +104,11 @@ const OnboardingPage = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-sm sm:w-[320px]">
-              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 px-4 py-3">
+              <div className="rounded-2xl border border-purple-400/20 bg-purple-500/10 px-4 py-3">
                 <p className="text-slate-300">Interests</p>
                 <p className="mt-1 text-2xl font-bold text-white">
                   {interests.length}
-                  <span className="ml-1 text-sm font-medium text-blue-200">
+                  <span className="ml-1 text-sm font-medium text-purple-200">
                     /10
                   </span>
                 </p>
@@ -127,14 +127,14 @@ const OnboardingPage = () => {
 
           <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-4">
             <div className="flex items-start gap-3">
-              <div className="rounded-xl bg-cyan-400/15 p-2 text-cyan-200">
+              <div className="rounded-xl bg-purple-400/15 p-2 text-purple-200">
               </div>
               <div className="space-y-3">
                 <p className="text-sm font-medium text-white">
                   Quick example
                 </p>
                 <div className="flex flex-col gap-2 text-sm text-slate-300 sm:flex-row sm:flex-wrap">
-                  <span className="rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1.5 text-blue-100">
+                  <span className="rounded-full border border-purple-400/20 bg-purple-500/10 px-3 py-1.5 text-purple-100">
                     Coding -{'>'} more programming videos
                   </span>
                   <span className="rounded-full border border-red-400/20 bg-red-500/10 px-3 py-1.5 text-red-100">
@@ -154,16 +154,16 @@ const OnboardingPage = () => {
                 type="number"
                 value={age}
                 onChange={(e) => setAge(Number(e.target.value))}
-                className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
+                className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
                 placeholder="Enter your age"
               />
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
-              <div className="group rounded-3xl border border-blue-400/15 bg-gradient-to-br from-blue-500/10 via-slate-950/60 to-slate-950/80 p-5 transition duration-300 hover:border-blue-400/35 hover:shadow-lg hover:shadow-blue-500/10">
+              <div className="group rounded-3xl border border-purple-400/15 bg-gradient-to-br from-purple-500/10 via-slate-950/60 to-slate-950/80 p-5 transition duration-300 hover:border-purple-400/35 hover:shadow-lg hover:shadow-purple-500/10">
                 <div className="mb-4 flex items-start justify-between gap-4">
                   <div>
-                    <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-100">
+                    <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-100">
                       <Sparkles className="h-3.5 w-3.5" />
                       Show More
                     </div>
@@ -178,8 +178,8 @@ const OnboardingPage = () => {
                   </span>
                 </div>
 
-                <div className="mb-4 rounded-2xl border border-blue-400/15 bg-slate-900/70 p-3">
-                  <p className="text-xs uppercase tracking-[0.18em] text-blue-200/80">
+                <div className="mb-4 rounded-2xl border border-purple-400/15 bg-slate-900/70 p-3">
+                  <p className="text-xs uppercase tracking-[0.18em] text-purple-200/80">
                     Example
                   </p>
                   <p className="mt-1 text-sm text-slate-200">
@@ -195,13 +195,13 @@ const OnboardingPage = () => {
                     type="text"
                     value={currentInterest}
                     onChange={(e) => setCurrentInterest(e.target.value)}
-                    className="flex-1 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20"
+                    className="flex-1 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
                     placeholder="Type a topic you like"
                   />
                   <button
                     type="submit"
                     disabled={interests.length >= 10}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:translate-y-[-1px] hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-purple-600 px-5 py-3 font-semibold text-white transition hover:translate-y-[-1px] hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Plus className="h-4 w-4" />
                     Add Interest
@@ -215,8 +215,8 @@ const OnboardingPage = () => {
                         key={idx}
                         className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-all duration-300 ${
                           highlightedInterest === interest
-                            ? "scale-105 border-blue-300 bg-blue-500 text-white shadow-lg shadow-blue-500/30 animate-pulse"
-                            : "border-blue-400/15 bg-blue-500/10 text-blue-100"
+                            ? "scale-105 border-purple-300 bg-purple-500 text-white shadow-lg shadow-purple-500/30 animate-pulse"
+                            : "border-purple-400/15 bg-purple-500/10 text-purple-100"
                         }`}
                       >
                         {interest}
@@ -331,7 +331,7 @@ const OnboardingPage = () => {
                 disabled={
                   !age || interests.length === 0 || disinterests.length === 0
                 }
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-6 py-3.5 text-base font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 px-6 py-3.5 text-base font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/25 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Complete Setup
                 <ArrowRight className="h-4 w-4" />

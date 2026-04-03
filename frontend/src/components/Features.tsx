@@ -6,7 +6,7 @@ const features = [
         name: 'AI-Driven Content Filtering',
         description: 'Advanced NLP-based engine using BERT to analyze video titles, descriptions, and transcripts. We effectively perceive and filter out sensitive or distracting content.',
         icon: Filter,
-        color: 'bg-blue-500/10 text-blue-400'
+        color: 'bg-purple-500/10 text-purple-400'
     },
     {
         name: 'Hybrid Recommendation Engine',
@@ -45,7 +45,7 @@ const Features: React.FC = () => {
         <div id="features" className="bg-black py-24 sm:py-32">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
                 <div className="mx-auto max-w-2xl lg:text-center animate-fade-in-up">
-                    <h2 className="text-base font-semibold leading-7 text-blue-400">Core Capabilities</h2>
+                    <h2 className="text-base font-semibold leading-7 text-purple-400">Core Capabilities</h2>
                     <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
                         Designed for Focus. Built for Growth.
                     </p>
