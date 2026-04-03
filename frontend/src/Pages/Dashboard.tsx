@@ -3,7 +3,7 @@ import { Activity, ArrowLeft, Flame, ShieldAlert, Sparkles } from "lucide-react"
 import { Link } from "react-router-dom";
 import { getDailyStatistics, getWeeklyReport } from "../api/analytics";
 import DistractionScoreChart from "../components/charts/DistractionScoreChart";
-import MovingAverageChart from "../components/charts/MovingAverageChart";
+// import MovingAverageChart from "../components/charts/MovingAverageChart";
 import OverridesChart from "../components/charts/OverridesChart";
 import TimeByCategoryChart from "../components/charts/TimeByCategoryChart";
 import ProductivityRing from "../components/ProductivityRing";
