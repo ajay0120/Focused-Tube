@@ -26,7 +26,7 @@ class SearchController:
                 texts=[query],
                 category="query",
                 disinterests=clean_disinterests,
-                threshold=0.5,
+                threshold=0.45,
             )[0]
 
             if query_blocked:
@@ -41,7 +41,7 @@ class SearchController:
                 }
         print("Query passed disinterest check, fetching videos...")
         # Step 2: Fetch YouTube videos
-        videos = youtube_service.search(query, max_results=20)
+        videos = youtube_service.search(query, max_results=15)
 
         if not videos:
             return {
@@ -82,7 +82,7 @@ class SearchController:
             texts=texts,
             category=category,
             disinterests=clean_disinterests,
-            threshold=0.6,
+            threshold=0.3,
         )
 
         allowed_videos = [
