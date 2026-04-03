@@ -8,7 +8,7 @@ const Hero: React.FC = () => {
         <div className="relative overflow-hidden bg-black text-white pt-20 pb-24 lg:pt-32 lg:pb-36">
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
                 <div className="absolute -top-[30%] -right-[10%] w-[70rem] h-[70rem] bg-purple-900/20 rounded-full blur-3xl animate-float-slow" />
-                <div className="absolute -bottom-[30%] -left-[10%] w-[70rem] h-[70rem] bg-blue-900/20 rounded-full blur-3xl animate-float-medium" />
+                <div className="absolute -bottom-[30%] -left-[10%] w-[70rem] h-[70rem] bg-fuchsia-900/20 rounded-full blur-3xl animate-float-medium" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -44,8 +44,8 @@ const Hero: React.FC = () => {
 
                 <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 py-8 border-t border-white/10 bg-white/5 rounded-2xl backdrop-blur-sm animate-fade-in-up [animation-delay:420ms]">
                     <div className="flex flex-col items-center transition-transform duration-200 hover:-translate-y-1">
-                        <div className="p-3 bg-blue-500/10 rounded-xl mb-3 ring-1 ring-blue-400/20">
-                            <Zap className="w-6 h-6 text-blue-400" />
+                        <div className="p-3 bg-purple-500/10 rounded-xl mb-3 ring-1 ring-purple-400/20">
+                            <Zap className="w-6 h-6 text-purple-400" />
                         </div>
                         <h3 className="text-lg font-semibold">Strict Filtering</h3>
                         <p className="text-gray-400 text-sm">NLP-based distraction removal</p>

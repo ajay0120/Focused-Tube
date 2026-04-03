@@ -217,16 +217,16 @@ const SearchPage = () => {
 
       <main className="container relative mx-auto mt-16 px-4 py-8">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute left-[-6rem] top-0 h-56 w-56 rounded-full bg-cyan-500/10 blur-3xl animate-float-slow" />
-          <div className="absolute right-[-4rem] top-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl animate-float-medium" />
+          <div className="absolute left-[-6rem] top-0 h-56 w-56 rounded-full bg-fuchsia-500/10 blur-3xl animate-float-slow" />
+          <div className="absolute right-[-4rem] top-16 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl animate-float-medium" />
         </div>
 
         <div className="relative mx-auto mb-8 max-w-5xl rounded-[32px] border border-white/10 bg-slate-900/80 px-5 py-8 text-center shadow-2xl shadow-black/20 backdrop-blur sm:px-8">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-cyan-200">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-purple-200">
             <Sparkles className="h-3.5 w-3.5" />
             Discovery
           </div>
-          <h1 className="mb-4 bg-gradient-to-r from-cyan-200 via-white to-blue-300 bg-clip-text text-4xl font-black text-transparent">
+          <h1 className="mb-4 bg-gradient-to-r from-fuchsia-200 via-white to-purple-300 bg-clip-text text-4xl font-black text-transparent">
             Find Focused Content
           </h1>
           <p className="mx-auto mb-6 max-w-2xl text-lg text-slate-300">
@@ -285,14 +285,14 @@ const SearchPage = () => {
             <input
               type="text"
               placeholder="What do you want to learn today?"
-              className="w-full rounded-full border border-white/10 bg-slate-950/80 px-6 py-4 pl-14 text-white shadow-lg outline-none transition duration-200 focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20"
+              className="w-full rounded-full border border-white/10 bg-slate-950/80 px-6 py-4 pl-14 text-white shadow-lg outline-none transition duration-200 focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
             <Search className="absolute left-5 top-4 h-6 w-6 text-slate-400" />
             <button
               type="submit"
-              className="absolute right-2 top-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-2 font-medium text-white transition duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/20"
+              className="absolute right-2 top-2 rounded-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-violet-600 px-6 py-2 font-medium text-white transition duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20"
             >
               Search
             </button>
@@ -323,7 +323,7 @@ const SearchPage = () => {
           </div>
         ) : loading ? (
           <div className="mt-12 flex justify-center">
-            <Loader className="h-12 w-12 animate-spin text-cyan-400" />
+            <Loader className="h-12 w-12 animate-spin text-purple-400" />
           </div>
         ) : error ? (
           <div className="mt-12 text-center text-red-400">{error}</div>
@@ -385,7 +385,7 @@ const VideoCard = ({
 }) => (
   <div
     onClick={onClick}
-    className="group cursor-pointer overflow-hidden rounded-[24px] border border-white/10 bg-slate-900/80 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-cyan-500/10"
+    className="group cursor-pointer overflow-hidden rounded-[24px] border border-white/10 bg-slate-900/80 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-purple-400/40 hover:shadow-purple-500/10"
   >
     <img
       src={video.thumbnail}
@@ -394,7 +394,7 @@ const VideoCard = ({
     />
 
     <div className="p-6">
-      <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white transition group-hover:text-cyan-300">
+      <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white transition group-hover:text-purple-300">
         {video.title}
       </h3>
       <p className="mb-4 text-sm text-slate-400">{video.channelTitle}</p>

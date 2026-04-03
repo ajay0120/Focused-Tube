@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Activity, Flame, ShieldAlert, Sparkles } from "lucide-react";
+import { Activity, ArrowLeft, Flame, ShieldAlert, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 import { getDailyStatistics, getWeeklyReport } from "../api/analytics";
 import DistractionScoreChart from "../components/charts/DistractionScoreChart";
 import MovingAverageChart from "../components/charts/MovingAverageChart";
 import OverridesChart from "../components/charts/OverridesChart";
 import TimeByCategoryChart from "../components/charts/TimeByCategoryChart";
 import ProductivityRing from "../components/ProductivityRing";
+import Navbar from "../components/Navbar";
 
 const Dashboard: React.FC = () => {
   const [daily, setDaily] = useState<any>(null);
@@ -64,10 +66,18 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#07111f] px-4 py-10 text-gray-200 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl space-y-10">
+    <div className="min-h-screen bg-[#07111f] text-gray-200">
+      <Navbar />
+      <div className="mx-auto max-w-7xl space-y-10 px-4 py-24 sm:px-6 lg:px-8">
         <div className="rounded-[32px] border border-white/10 bg-slate-900/80 p-6 shadow-2xl shadow-black/20 backdrop-blur sm:p-8">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-cyan-200">
+          <Link
+            to="/profile"
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Profile
+          </Link>
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-purple-200">
             <Sparkles className="h-3.5 w-3.5" />
             Analytics
           </div>
@@ -99,7 +109,7 @@ const Dashboard: React.FC = () => {
             <KpiCard
               title="Distraction Score"
               value={`${Math.round((daily.distractionScore || 0) * 100)}%`}
-              color="text-cyan-300"
+              color="text-purple-300"
             />
           </div>
         )}
@@ -108,7 +118,7 @@ const Dashboard: React.FC = () => {
           <>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <GlassCard>
-                <div className="mb-4 inline-flex rounded-2xl bg-white/5 p-3 text-cyan-200">
+                <div className="mb-4 inline-flex rounded-2xl bg-white/5 p-3 text-purple-200">
                   <ShieldAlert className="h-5 w-5" />
                 </div>
                 <p className="text-sm text-slate-400">Current Risk Level</p>
@@ -135,7 +145,7 @@ const Dashboard: React.FC = () => {
               </GlassCard>
 
               <GlassCard>
-                <div className="mb-4 inline-flex rounded-2xl bg-white/5 p-3 text-cyan-200">
+                <div className="mb-4 inline-flex rounded-2xl bg-white/5 p-3 text-purple-200">
                   <Activity className="h-5 w-5" />
                 </div>
                 <p className="mb-6 text-sm text-slate-400">
@@ -189,7 +199,7 @@ const Dashboard: React.FC = () => {
 };
 
 const GlassCard = ({ children }: any) => (
-  <div className="rounded-[28px] border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-black/15 backdrop-blur transition duration-300 hover:border-cyan-400/20 hover:shadow-cyan-500/5 sm:p-8">
+  <div className="rounded-[28px] border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-black/15 backdrop-blur transition duration-300 hover:border-purple-400/20 hover:shadow-purple-500/5 sm:p-8">
     {children}
   </div>
 );
@@ -203,7 +213,7 @@ const KpiCard = ({
   value: string;
   color?: string;
 }) => (
-  <div className="rounded-[28px] border border-white/10 bg-slate-900/80 p-6 shadow-lg shadow-black/15 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-400/20 hover:shadow-cyan-500/5">
+  <div className="rounded-[28px] border border-white/10 bg-slate-900/80 p-6 shadow-lg shadow-black/15 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-purple-400/20 hover:shadow-purple-500/5">
     <p className="text-sm text-slate-400">{title}</p>
     <h3 className={`mt-3 text-3xl font-bold ${color}`}>{value}</h3>
   </div>

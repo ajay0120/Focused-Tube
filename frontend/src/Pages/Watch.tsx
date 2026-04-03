@@ -49,7 +49,7 @@ const Watch = () => {
             </button>
 
             <div className="mt-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-300/80">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-purple-300/80">
                 {video.mode === "relax" ? "Relax Mode" : "Study Mode"}
               </p>
               <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
