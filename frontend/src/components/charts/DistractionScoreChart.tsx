@@ -15,7 +15,7 @@ const DistractionScoreChart = ({ data }: { data: DistractionData[] }) => {
       datasets: [
         {
           label: "Distraction Score",
-          data: data.map(item => item.distractionScore),
+          data: data.map(item => item.distractionScore*100),
           borderColor: "rgba(239,68,68,1)", // red-500
           backgroundColor: "rgba(239,68,68,0.15)",
           fill: true,

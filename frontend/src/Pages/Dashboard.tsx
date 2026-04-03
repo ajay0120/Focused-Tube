@@ -152,7 +152,7 @@ const Dashboard: React.FC = () => {
                   Productivity Score
                 </p>
                 <div className="flex justify-center">
-                  <ProductivityRing percentage={weekly.productivityScore * 100} />
+                  <ProductivityRing percentage={(1 - daily.distractionScore) * 100} />
                 </div>
               </GlassCard>
             </div>
@@ -168,13 +168,13 @@ const Dashboard: React.FC = () => {
                 />
               </GlassCard>
 
-              <GlassCard>
+              {/* <GlassCard>
                 <SectionTitle title="3-Day Moving Average" />
                 <MovingAverageChart
                   labels={weekly.distractionTrend.map((d: any) => d._id)}
                   data={weekly.movingAverage}
                 />
-              </GlassCard>
+              </GlassCard> */}
 
               <GlassCard>
                 <SectionTitle title="Overrides Per Day" />
