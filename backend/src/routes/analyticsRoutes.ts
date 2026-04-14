@@ -5,16 +5,17 @@ import {
   getDailyStatisticsRateLimiter,
   getWeeklyReportRateLimiter,
   logActivityRateLimiter,
+  generalIPRateLimiter,
 } from '../middleware/rateLimitingMiddleware';
 
 const router = express.Router();
 
 // Daily statistics route
-router.get('/daily', getDailyStatisticsRateLimiter, protect, getDailyStatistics);
+router.get('/daily', generalIPRateLimiter, protect, getDailyStatisticsRateLimiter, getDailyStatistics);
 
 // Weekly report route
-router.get('/weekly', getWeeklyReportRateLimiter, protect, getWeeklyReport);
+router.get('/weekly', generalIPRateLimiter, protect, getWeeklyReportRateLimiter, getWeeklyReport);
 
-router.post('/log', logActivityRateLimiter, protect, logActivity);
+router.post('/log', generalIPRateLimiter, protect, logActivityRateLimiter, logActivity);
 
 export default router;

@@ -4,6 +4,7 @@ import generateToken from "../utils/generateToken";
 import logger from "../utils/logger";
 import sendEmail from "../utils/sendEmail";
 import { OAuth2Client } from "google-auth-library";
+import { getNormalizedEmail, getTrimmedString } from "../utils/requestSanitizer";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -15,7 +16,14 @@ const generateOTP = () => {
 // @route   POST /api/users/login
 // @access  Public
 export const authUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const email = getNormalizedEmail(req.body.email);
+  const password = getTrimmedString(req.body.password);
+
+  if (!email || !password) {
+    res.status(400).json({ message: "Valid email and password are required" });
+    return;
+  }
+
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
@@ -49,7 +57,15 @@ export const authUser = async (req: Request, res: Response) => {
 // @route   POST /api/users
 // @access  Public
 export const registerUser = async (req: Request, res: Response) => {
-  const { name, username, email, password } = req.body;
+  const name = getTrimmedString(req.body.name);
+  const username = getTrimmedString(req.body.username);
+  const email = getNormalizedEmail(req.body.email);
+  const password = getTrimmedString(req.body.password);
+
+  if (!name || !username || !email || !password) {
+    res.status(400).json({ message: "Valid name, username, email, and password are required" });
+    return;
+  }
 
   const userExists = await User.findOne({ email });
 
@@ -116,7 +132,13 @@ export const registerUser = async (req: Request, res: Response) => {
 // @route   POST /api/users/verify-otp
 // @access  Public
 export const verifyOtp = async (req: Request, res: Response) => {
-  const { email, otp } = req.body;
+  const email = getNormalizedEmail(req.body.email);
+  const otp = getTrimmedString(req.body.otp);
+
+  if (!email || !otp) {
+    res.status(400).json({ message: "Valid email and OTP are required" });
+    return;
+  }
 
   const user = await User.findOne({ email });
 
@@ -165,7 +187,12 @@ export const verifyOtp = async (req: Request, res: Response) => {
 // @route   POST /api/users/resend-otp
 // @access  Public
 export const resendOtp = async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const email = getNormalizedEmail(req.body.email);
+
+  if (!email) {
+    res.status(400).json({ message: "Valid email is required" });
+    return;
+  }
 
   const user = await User.findOne({ email });
 
@@ -220,7 +247,12 @@ export const resendOtp = async (req: Request, res: Response) => {
 // @route   POST /api/users/google-login
 // @access  Public
 export const googleLogin = async (req: Request, res: Response) => {
-  const { token } = req.body;
+  const token = getTrimmedString(req.body.token);
+
+  if (!token) {
+    res.status(400).json({ message: "Valid Google token is required" });
+    return;
+  }
 
   try {
     const ticket = await client.verifyIdToken({
@@ -306,7 +338,12 @@ export const googleLogin = async (req: Request, res: Response) => {
 // @route   POST /api/users/forgot-password
 // @access  Public
 export const forgotPassword = async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const email = getNormalizedEmail(req.body.email);
+
+  if (!email) {
+    res.status(400).json({ message: "Valid email is required" });
+    return;
+  }
 
   const user = await User.findOne({ email });
 
@@ -347,7 +384,14 @@ export const forgotPassword = async (req: Request, res: Response) => {
 // @route   POST /api/users/reset-password
 // @access  Public
 export const resetPassword = async (req: Request, res: Response) => {
-  const { email, otp, newPassword } = req.body;
+  const email = getNormalizedEmail(req.body.email);
+  const otp = getTrimmedString(req.body.otp);
+  const newPassword = getTrimmedString(req.body.newPassword);
+
+  if (!email || !otp || !newPassword) {
+    res.status(400).json({ message: "Valid email, OTP, and new password are required" });
+    return;
+  }
 
   const user = await User.findOne({ email });
 
