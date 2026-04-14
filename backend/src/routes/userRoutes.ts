@@ -12,8 +12,8 @@ const router = express.Router();
 
 router
   .route('/profile')
-  .get(protect, getUserProfileRateLimiter, getUserProfile)
-  .put(protect, updateUserProfileRateLimiter, updateUserProfile);
-router.route('/blocked-count/increment').post(protect, incrementBlockedCountRateLimiter, incrementBlockedCount);
+  .get(getUserProfileRateLimiter, protect, getUserProfile)
+  .put(updateUserProfileRateLimiter, protect, updateUserProfile);
+router.route('/blocked-count/increment').post(incrementBlockedCountRateLimiter, protect, incrementBlockedCount);
 
 export default router;
