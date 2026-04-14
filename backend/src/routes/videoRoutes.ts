@@ -5,6 +5,6 @@ import { videoSearchRateLimiter } from '../middleware/rateLimitingMiddleware';
 
 const router = express.Router();
 
-router.route('/search').get(protect, videoSearchRateLimiter, search);
+router.route('/search').get(videoSearchRateLimiter, protect, search);
 
 export default router;
