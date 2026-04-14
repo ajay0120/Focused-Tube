@@ -4,6 +4,8 @@ import logger from '../utils/logger';
 
 dotenv.config();
 
+mongoose.set('sanitizeFilter', true);
+
 const connectDB = async () => {
     try {
         const conn = await mongoose.connect(process.env.MONGO_URI || '');

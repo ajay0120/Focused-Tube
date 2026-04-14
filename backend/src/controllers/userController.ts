@@ -2,6 +2,13 @@ import { Request, Response } from 'express';
 import User from "../models/User";
 import logger from '../utils/logger';
 import generateToken from '../utils/generateToken';
+import {
+  getNormalizedEmail,
+  getOptionalBoolean,
+  getOptionalNumber,
+  getOptionalTrimmedString,
+  getStringArray,
+} from '../utils/requestSanitizer';
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
@@ -37,20 +44,87 @@ export const updateUserProfile = async (req: any, res: Response) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    user.name = req.body.name || user.name;
-    user.username = req.body.username || user.username;
-    user.email = req.body.email || user.email;
-    if (req.body.password) {
-      user.password = req.body.password;
+    const name = getOptionalTrimmedString(req.body.name);
+    const username = getOptionalTrimmedString(req.body.username);
+    const email = req.body.email === undefined ? undefined : getNormalizedEmail(req.body.email);
+    const password = getOptionalTrimmedString(req.body.password);
+    const interests = req.body.interests === undefined ? undefined : getStringArray(req.body.interests);
+    const disinterests =
+      req.body.disinterests === undefined ? undefined : getStringArray(req.body.disinterests);
+    const age = getOptionalNumber(req.body.age);
+    const onboardingCompleted = getOptionalBoolean(req.body.onboardingCompleted);
+
+    if (req.body.name !== undefined && !name) {
+      res.status(400).json({ message: 'Name must be a non-empty string' });
+      return;
+    }
+
+    if (req.body.username !== undefined && !username) {
+      res.status(400).json({ message: 'Username must be a non-empty string' });
+      return;
+    }
+
+    if (req.body.email !== undefined && !email) {
+      res.status(400).json({ message: 'Email must be a non-empty string' });
+      return;
+    }
+
+    if (req.body.password !== undefined && !password) {
+      res.status(400).json({ message: 'Password must be a non-empty string' });
+      return;
+    }
+
+    if (req.body.mode !== undefined && req.body.mode !== 'study' && req.body.mode !== 'relax') {
+      res.status(400).json({ message: 'Mode must be either study or relax' });
+      return;
+    }
+
+    if (req.body.interests !== undefined && interests === null) {
+      res.status(400).json({ message: 'Interests must be an array of strings' });
+      return;
+    }
+
+    if (req.body.disinterests !== undefined && disinterests === null) {
+      res.status(400).json({ message: 'Disinterests must be an array of strings' });
+      return;
+    }
+
+    if (age === null) {
+      res.status(400).json({ message: 'Age must be a valid number' });
+      return;
+    }
+
+    if (onboardingCompleted === null) {
+      res.status(400).json({ message: 'onboardingCompleted must be a boolean' });
+      return;
+    }
+
+    if (name) {
+      user.name = name;
+    }
+    if (username) {
+      user.username = username;
+    }
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
     }
     if (req.body.mode !== undefined) {
       user.mode = req.body.mode;
     }
-    user.interests = req.body.interests || user.interests;
-    user.disinterests = req.body.disinterests || user.disinterests;
-    user.age = req.body.age || user.age;
-    if (req.body.onboardingCompleted !== undefined) {
-      user.onboardingCompleted = req.body.onboardingCompleted;
+    if (interests) {
+      user.interests = interests;
+    }
+    if (disinterests) {
+      user.disinterests = disinterests;
+    }
+    if (age !== undefined) {
+      user.age = age;
+    }
+    if (onboardingCompleted !== undefined) {
+      user.onboardingCompleted = onboardingCompleted;
     }
 
     const updatedUser = await user.save();

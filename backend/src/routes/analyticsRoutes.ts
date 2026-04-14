@@ -10,11 +10,11 @@ import {
 const router = express.Router();
 
 // Daily statistics route
-router.get('/daily', getDailyStatisticsRateLimiter, protect, getDailyStatistics);
+router.get('/daily', protect, getDailyStatisticsRateLimiter, getDailyStatistics);
 
 // Weekly report route
-router.get('/weekly', getWeeklyReportRateLimiter, protect, getWeeklyReport);
+router.get('/weekly', protect, getWeeklyReportRateLimiter, getWeeklyReport);
 
-router.post('/log', logActivityRateLimiter, protect, logActivity);
+router.post('/log', protect, logActivityRateLimiter, logActivity);
 
 export default router;
