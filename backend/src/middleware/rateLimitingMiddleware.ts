@@ -107,12 +107,6 @@ function createHybridRateLimiter({
 
 const minutes = (value: number) => value * 60 * 1000;
 
-export const generalIPRateLimiter = createHybridRateLimiter({
-  windowMs: minutes(15),
-  max: 100,
-  keyType: 'ip',
-});
-
 export const registerRateLimiter = createHybridRateLimiter({
   windowMs: minutes(15),
   max: 5,
