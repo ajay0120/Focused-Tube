@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import crypto from "crypto";
 import User from "../models/User";
 import generateToken from "../utils/generateToken";
 import logger from "../utils/logger";
@@ -11,6 +12,8 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
+
+const generateSecurePassword = (bytes = 24) => crypto.randomBytes(bytes).toString("base64url");
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -297,9 +300,7 @@ export const googleLogin = async (req: Request, res: Response) => {
         token: generateToken(user._id.toString()),
       });
     } else {
-      const randomPassword =
-        Math.random().toString(36).slice(-8) +
-        Math.random().toString(36).slice(-8);
+      const randomPassword = generateSecurePassword();
 
       user = await User.create({
         name: name || "Google User",
